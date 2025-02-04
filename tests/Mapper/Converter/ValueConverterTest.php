@@ -37,7 +37,7 @@ class ValueConverterTest extends \PHPUnit\Framework\TestCase
             DataTypeEnum::BOOL->value => false,
             DataTypeEnum::OBJECT->value => [],
         ] as $type => $expectedValue) {
-            $this->assertSame($expectedValue, $valueConverter->convert(null, $type, false));
+            $this->assertSame($expectedValue, $valueConverter->convert(null, $type, false), 'invalid conversion of null for type: '.$type);
         }
     }
 

@@ -111,3 +111,35 @@ class BookDataGenerator extends AbstractEntityDataGenerator
     }
 }
 ```
+
+## Advanced setFieldConverter usage
+
+You can convert the entity's attribute using a service.
+
+
+You can also setup your mapping manually using the `Mapping` class.
+
+```php
+    use Biblioverse\TypesenseBundle\Mapper\Fields\FieldMapping;
+    use Biblioverse\TypesenseBundle\Mapper\Mapping;
+    use Biblioverse\TypesenseBundle\Mapper\Converter\Field\FieldConverterInterface;
+    // ..
+    
+    public function getMapping(): Mapping{
+        $mapping = new Mapping();
+        
+        $field = new FieldMapping('phone', 'string');
+        $field->setFieldConverter(new class(\libphonenumber\PhoneNumberUtil::getInstance()) implements FieldConverterInterface{  
+            public function __construct(private \libphonenumber\PhoneNumberUtil $libPhoneNumber)
+            {}
+            
+            public function convert(object $entity, mixed $value, FieldMappingInterface $fieldMapping): mixed;
+            {
+                return $this->libPhoneNumber->format($value, \libphonenumber\PhoneNumberFormat::E164);
+            });
+        });
+        
+        return $mapping;
+    }
+   // ..
+```

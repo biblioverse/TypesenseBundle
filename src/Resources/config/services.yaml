@@ -21,7 +21,6 @@ services:
   Biblioverse\TypesenseBundle\Mapper\Converter\ValueExtractor: ~
   Biblioverse\TypesenseBundle\Mapper\Converter\ValueExtractorInterface: '@Biblioverse\TypesenseBundle\Mapper\Converter\ValueExtractor'
 
-
   Biblioverse\TypesenseBundle\Mapper\Locator\MapperLocator:
     public: true
     arguments:
