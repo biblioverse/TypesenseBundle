@@ -43,7 +43,7 @@ class ValueConverter implements ValueConverterInterface
             return $return;
         }
 
-        throw new ValueConversionException($v, DataTypeEnum::OBJECT->value);
+        throw ValueConversionException::fromType($v, DataTypeEnum::OBJECT->value);
     }
 
     /**
@@ -94,13 +94,13 @@ class ValueConverter implements ValueConverterInterface
 
         if ($value instanceof \UnitEnum) {
             if ($type !== DataTypeEnum::STRING->value) {
-                throw new ValueConversionException($value, $type);
+                throw ValueConversionException::fromType($value, $type);
             }
             $value = $value->name;
         }
 
         if (is_resource($value)) {
-            throw new ValueConversionException($value, $type);
+            throw ValueConversionException::fromType($value, $type);
         }
 
         try {
@@ -121,7 +121,7 @@ class ValueConverter implements ValueConverterInterface
                 default => $value === null ? null : ((string) $value),  // @phpstan-ignore cast.string
             };
         } catch (\Throwable $e) {
-            throw new ValueConversionException($value, $type, $e);
+            throw ValueConversionException::fromType($value, $type, $e);
         }
     }
 
