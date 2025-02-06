@@ -11,6 +11,6 @@ class ValueConversionExceptionTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ValueConversionException::class);
         $this->expectExceptionMessage('Cannot convert int to string');
 
-        throw new ValueConversionException(12, 'string');
+        throw ValueConversionException::fromType(12, 'string');
     }
 }

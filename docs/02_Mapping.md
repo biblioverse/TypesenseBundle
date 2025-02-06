@@ -58,4 +58,3 @@ Config
           type: string
           entity_attribute: typesenseAddress
 ```
-

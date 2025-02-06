@@ -2,6 +2,7 @@
 
 namespace Biblioverse\TypesenseBundle\Mapper\Fields;
 
+use Biblioverse\TypesenseBundle\Mapper\Converter\Field\FieldConverterInterface;
 use Biblioverse\TypesenseBundle\Type\DataTypeEnum;
 
 interface FieldMappingInterface
@@ -28,6 +29,11 @@ interface FieldMappingInterface
      * You should use `name` if not set.
      */
     public function getEntityAttribute(): ?string;
+
+    /**
+     * Dedicated service to convert the entity value to a single field value.
+     */
+    public function getFieldConverter(): ?FieldConverterInterface;
 
     public function isOptional(): bool;
 }

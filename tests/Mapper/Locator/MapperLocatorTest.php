@@ -4,12 +4,14 @@ namespace Biblioverse\TypesenseBundle\Tests\Mapper\Locator;
 
 use Biblioverse;
 use Biblioverse\TypesenseBundle\Mapper\DataGeneratorInterface;
+use Biblioverse\TypesenseBundle\Mapper\Entity\EntityTransformerInterface;
 use Biblioverse\TypesenseBundle\Mapper\Locator\InvalidTypeMapperException;
 use Biblioverse\TypesenseBundle\Mapper\Locator\MapperLocator;
 use Biblioverse\TypesenseBundle\Mapper\MappingGeneratorInterface;
 use Biblioverse\TypesenseBundle\Tests\Entity\Product;
 use Biblioverse\TypesenseBundle\Tests\TestKernel;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Contracts\Service\ServiceCollectionInterface;
 
 #[CoversClass(MapperLocator::class)]
 class MapperLocatorTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
@@ -109,5 +111,96 @@ class MapperLocatorTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
         $mapperLocator = $this->get(MapperLocator::class);
 
         $this->assertFalse($mapperLocator->hasEntityTransformer(\stdClass::class));
+    }
+
+    public function testGetEntityTransformers(): void
+    {
+        $myClass = new class {
+        };
+
+        $testEntityTransformer = $this->getTestEntityTransformer();
+
+        $mapperLocator = new MapperLocator(
+            collectionManagers: $this->getServiceCollection([]),
+            dataGenerators: $this->getServiceCollection([]),
+            mappingGenerators: $this->getServiceCollection([]),
+            entityTransformers: $this->getServiceCollection(['test' => $testEntityTransformer]),
+            entityMapping: [$myClass::class => ['test']],
+        );
+
+        $this->assertSame(['test' => $testEntityTransformer], $mapperLocator->getEntityTransformers($myClass::class));
+    }
+
+    /**
+     * @template T of object
+     *
+     * @param array<string,T> $services
+     *
+     * @return ServiceCollectionInterface<T>
+     */
+    public function getServiceCollection(array $services): ServiceCollectionInterface
+    {
+        return new class($services) implements ServiceCollectionInterface {
+            public function __construct(
+                /** @var array<string,T> $services */
+                private readonly array $services,
+            ) {
+            }
+
+            /**
+             * @return \Traversable<T>
+             */
+            public function getIterator(): \Traversable
+            {
+                return new \ArrayIterator($this->services);
+            }
+
+            public function count(): int
+            {
+                return count($this->services);
+            }
+
+            /**
+             * @return ?T
+             */
+            public function get(string $id): mixed
+            {
+                return $this->services[$id] ?? null;
+            }
+
+            public function has(string $id): bool
+            {
+                return array_key_exists($id, $this->services);
+            }
+
+            /**
+             * @return array<string, string>
+             */
+            public function getProvidedServices(): array
+            {
+                $keys = array_keys($this->services);
+                $names = array_map(get_class(...), $this->services);
+
+                return array_combine($keys, $names);
+            }
+        };
+    }
+
+    /**
+     * @return EntityTransformerInterface<object>
+     */
+    private function getTestEntityTransformer(): EntityTransformerInterface
+    {
+        return new class implements EntityTransformerInterface {
+            public function support(object $entity): bool
+            {
+                return true;
+            }
+
+            public function transform(object $entity): array
+            {
+                return [];
+            }
+        };
     }
 }
