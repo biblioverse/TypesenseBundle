@@ -7,22 +7,22 @@ use Biblioverse\TypesenseBundle\Mapper\DataGeneratorInterface;
 use Biblioverse\TypesenseBundle\Mapper\Entity\EntityTransformerInterface;
 use Biblioverse\TypesenseBundle\Mapper\MappingGeneratorInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Contracts\Service\ServiceCollectionInterface;
 
-class MapperLocator implements MapperLocatorInterface
+final class MapperLocator implements MapperLocatorInterface
 {
     /**
-     * @param ServiceLocator<CollectionManagerInterface|object>  $collectionManagers
-     * @param ServiceLocator<DataGeneratorInterface>             $dataGenerators
-     * @param ServiceLocator<MappingGeneratorInterface>          $mappingGenerators
-     * @param ServiceLocator<EntityTransformerInterface<object>> $entityTransformers
-     * @param array<class-string, string[]>                      $entityMapping      index is the entity class name, values are the mapper names for this entity
+     * @param ServiceCollectionInterface<CollectionManagerInterface|object>  $collectionManagers
+     * @param ServiceCollectionInterface<DataGeneratorInterface>             $dataGenerators
+     * @param ServiceCollectionInterface<MappingGeneratorInterface>          $mappingGenerators
+     * @param ServiceCollectionInterface<EntityTransformerInterface<object>> $entityTransformers
+     * @param array<class-string, string[]>                                  $entityMapping      index is the entity class name, values are the mapper names for this entity
      */
     public function __construct(
-        private readonly ServiceLocator $collectionManagers,
-        private readonly ServiceLocator $dataGenerators,
-        private readonly ServiceLocator $mappingGenerators,
-        private readonly ServiceLocator $entityTransformers,
+        private readonly ServiceCollectionInterface $collectionManagers,
+        private readonly ServiceCollectionInterface $dataGenerators,
+        private readonly ServiceCollectionInterface $mappingGenerators,
+        private readonly ServiceCollectionInterface $entityTransformers,
         private readonly array $entityMapping,
     ) {
     }
@@ -128,21 +128,17 @@ class MapperLocator implements MapperLocatorInterface
     {
         $response = [];
         foreach (($this->entityMapping[$entity] ?? []) as $mapperName) {
-            try {
-                $service = null;
-                if ($this->entityTransformers->has($mapperName)) {
-                    $service = $this->entityTransformers->get($mapperName);
-                }
+            $service = null;
+            if ($this->entityTransformers->has($mapperName)) {
+                $service = $this->entityTransformers->get($mapperName);
+            }
 
-                if ($service === null && $this->collectionManagers->has($mapperName)) {
-                    $service = $this->collectionManagers->get($mapperName);
-                }
+            if ($service === null && $this->collectionManagers->has($mapperName)) {
+                $service = $this->collectionManagers->get($mapperName);
+            }
 
-                if (!$service instanceof EntityTransformerInterface) {
-                    throw new InvalidTypeMapperException(sprintf('No valid entity transformer found for entity "%s" do you implemented "%s".', $entity, EntityTransformerInterface::class));
-                }
-            } catch (ServiceNotFoundException $e) {
-                throw new InvalidTypeMapperException(sprintf('No entity transformer found for entity "%s" do you implemented "%s".', $entity, EntityTransformerInterface::class), 0, $e);
+            if (!$service instanceof EntityTransformerInterface) {
+                throw new InvalidTypeMapperException(sprintf('No valid entity transformer found for entity "%s" do you implemented "%s".', $entity, EntityTransformerInterface::class));
             }
 
             $response[$mapperName] = $service;
