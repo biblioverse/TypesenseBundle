@@ -3,5 +3,6 @@
   "extends": [
     "config:recommended"
   ],
-  "ignoreDeps": ["psr/http-client-implementation"]
+  "ignoreDeps": ["psr/http-client-implementation"],
+  "rangeStrategy": "widen"
 }
