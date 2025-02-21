@@ -14,7 +14,7 @@
     "symfony/http-kernel": "^6.4|^7.2",
     "symfony/property-access": "^6.4|^7.2",
     "symfony/service-contracts": "^3.5",
-    "typesense/typesense-php": "^4.9"
+    "typesense/typesense-php": "^5.0"
   },
   "require-dev": {
     "doctrine/doctrine-bundle": "^2.0",
