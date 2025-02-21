@@ -2,6 +2,14 @@
 ## [Unreleased]
 
 
+<a name="v0.0.5"></a>
+## [v0.0.5](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.4...v0.0.5)
+
+### Fix
+
+* **deps:** update dependency typesense/typesense-php to v5
+
+
 <a name="v0.0.4"></a>
 ## [v0.0.4](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.3...v0.0.4)
 
