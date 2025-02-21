@@ -19,5 +19,19 @@ interface SearchCollectionInterface
      */
     public function search(SearchQuery $searchQuery): SearchResultsHydrated;
 
+    /**
+     * @param SearchQuery[] $searchQueries
+     *
+     * @return list<SearchResultsHydrated<T>>
+     */
+    public function multisearch(array $searchQueries): array;
+
     public function searchRaw(SearchQuery $searchQuery): SearchResults;
+
+    /**
+     * @param SearchQuery[] $searchQueries
+     *
+     * @return SearchResults[]
+     */
+    public function multisearchRaw(array $searchQueries): array;
 }

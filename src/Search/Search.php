@@ -30,4 +30,38 @@ class Search implements SearchInterface
             throw new SearchException($e->getMessage(), $e->getCode(), $e);
         }
     }
+
+    /**
+     * @param SearchQuery[] $searchQueries
+     *
+     * @return SearchResults[]
+     */
+    public function multiSearch(string $collectionName, array $searchQueries): array
+    {
+        $rawSearchQueries = array_map(fn (SearchQuery $searchQuery) => ['collection' => $collectionName] + $searchQuery->toArray(), $searchQueries);
+        try {
+            /** @var array{'results'?: array<string, mixed>} $rawResult * */
+            $rawResult = $this->client->getMultiSearch()
+                ->perform(['searches' => $rawSearchQueries]); // TODO Support for query parameters
+
+            $results = $rawResult['results'] ?? [];
+            $response = [];
+            /**
+             * @var int                 $index
+             * @var array<string,mixed> $result
+             */
+            foreach ($results as $index => $result) {
+                if (isset($result['error']) && isset($result['code'])) {
+                    $code = is_resource($result['code']) || !is_int($result['code']) ? 0 : $result['code'];
+                    $error = is_resource($result['error']) || !is_string($result['error']) ? 'Error' : $result['error'];
+                    throw new SearchException(sprintf('Multi-search sub-result error at %d: %s %s', $index, $code, $error));
+                }
+                $response[] = new SearchResults($result);
+            }
+
+            return $response;
+        } catch (TypesenseClientError|Exception $e) {
+            throw new SearchException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
 }

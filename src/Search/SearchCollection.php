@@ -37,4 +37,26 @@ class SearchCollection implements SearchCollectionInterface
 
         return $this->hydrateSearchResult->hydrate($this->entityClass, $searchResults);
     }
+
+    /**
+     * @param SearchQuery[] $searchQueries
+     *
+     * @return array<SearchResultsHydrated<T>>
+     */
+    public function multisearch(array $searchQueries): array
+    {
+        $searchResults = $this->search->multisearch($this->collectionName, $searchQueries);
+
+        return array_map(fn (SearchResults $searchResults) => $this->hydrateSearchResult->hydrate($this->entityClass, $searchResults), $searchResults);
+    }
+
+    /**
+     * @param SearchQuery[] $searchQueries
+     *
+     * @return array<SearchResults>
+     */
+    public function multisearchRaw(array $searchQueries): array
+    {
+        return $this->search->multisearch($this->collectionName, $searchQueries);
+    }
 }

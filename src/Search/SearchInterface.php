@@ -12,4 +12,6 @@ interface SearchInterface
      * @throws SearchException
      */
     public function search(string $collectionName, SearchQuery $searchQuery): SearchResults;
+
+    // TODO Add multiSearch
 }
