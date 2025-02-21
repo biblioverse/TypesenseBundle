@@ -4,32 +4,27 @@ namespace Biblioverse\TypesenseBundle\Tests\Client;
 
 use Biblioverse\TypesenseBundle\Client\ClientInterface;
 use Biblioverse\TypesenseBundle\Tests\KernelTestCase;
-use Typesense\Aliases;
-use Typesense\Analytics;
-use Typesense\Collection;
-use Typesense\Debug;
-use Typesense\Health;
-use Typesense\Keys;
-use Typesense\Metrics;
-use Typesense\MultiSearch;
-use Typesense\Operations;
-use Typesense\Presets;
 
 class ClientAdapterTest extends KernelTestCase
 {
     public function testClient(): void
     {
         $client = $this->get(ClientInterface::class);
-        $this->assertInstanceOf(Collection::class, $client->getCollection('books'));
-        $this->assertInstanceOf(Collection::class, $client->getCollections()['books']);
-        $this->assertInstanceOf(Debug::class, $client->getDebug());
-        $this->assertInstanceOf(Aliases::class, $client->getAliases());
-        $this->assertInstanceOf(Keys::class, $client->getKeys());
-        $this->assertInstanceOf(Metrics::class, $client->getMetrics());
-        $this->assertInstanceOf(Health::class, $client->getHealth());
-        $this->assertInstanceOf(Operations::class, $client->getOperations());
-        $this->assertInstanceOf(MultiSearch::class, $client->getMultiSearch());
-        $this->assertInstanceOf(Presets::class, $client->getPresets());
-        $this->assertInstanceOf(Analytics::class, $client->getAnalytics());
+        // Make sure the call is successful.
+        $client->getCollection('books');
+
+        $this->assertArrayHasKey('books', $client->getCollections());
+
+        // Calling all methods to ensure they are available and don't crash.
+        // Testing with instanceOf is making phpstan unhappy as the type is already narrowed.
+        $client->getDebug();
+        $client->getAliases();
+        $client->getKeys();
+        $client->getMetrics();
+        $client->getHealth();
+        $client->getOperations();
+        $client->getMultiSearch();
+        $client->getPresets();
+        $client->getAnalytics();
     }
 }

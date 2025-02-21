@@ -1,2 +1,8 @@
 parameters:
-    ignoreErrors:
+	ignoreErrors:
+		-
+			message: '#^Call to function method_exists\(\) with ''PHPUnit\\\\Framework\\\\TestCase'' and ''isArray'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			reportUnmatched: false
+			path: tests/Populate/PopulateServiceTest.php

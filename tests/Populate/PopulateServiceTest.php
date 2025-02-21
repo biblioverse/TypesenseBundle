@@ -84,6 +84,7 @@ class PopulateServiceTest extends TestCase
 
         $populateService = $this->getInstance(function (MockObject $mockObject) use ($collection) {
             $mockObject
+                ->expects($this->once())
                 ->method('getCollection')
                 ->with('collection')
                 ->willReturn($collection);
@@ -137,7 +138,7 @@ class PopulateServiceTest extends TestCase
 
         $docs->expects($this->exactly(count($datas) / $batchSize))
             ->method('import')
-            ->with($this->isType('array'))
+            ->with($this->isArrayBC())
             ->willReturnCallback(function ($arg) use ($expected) {
                 /** @var int $index */
                 static $index = 0;
@@ -152,6 +153,7 @@ class PopulateServiceTest extends TestCase
 
         $populateService = $this->getInstance(function (MockObject $mockObject) use ($collection) {
             $mockObject
+                ->expects($this->once())
                 ->method('getCollection')
                 ->with('collection')
                 ->willReturn($collection);
@@ -191,7 +193,7 @@ class PopulateServiceTest extends TestCase
     {
         $docs = $this->createMock(Documents::class);
         $doc = $this->createMock(Document::class);
-        $docs->method('offsetGet')->with('42')->willReturn($doc);
+        $docs->expects($this->once())->method('offsetGet')->with('42')->willReturn($doc);
         $doc->expects($this->once())
             ->method('delete');
 
@@ -237,5 +239,14 @@ class PopulateServiceTest extends TestCase
         }
 
         return new PopulateService($client, $batchSize);
+    }
+
+    public function isArrayBC(): mixed
+    {
+        if (method_exists(TestCase::class, 'isArray')) {
+            return TestCase::isArray();
+        }
+
+        return $this->isType('array');
     }
 }

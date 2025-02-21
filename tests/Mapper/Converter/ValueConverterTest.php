@@ -22,13 +22,13 @@ class ValueConverterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(['12', '13'], $valueConverter->convert([12, 13], DataTypeEnum::STRING_ARRAY->value));
         $this->assertSame([12, 13], $valueConverter->convert([12, 13], DataTypeEnum::INT32_ARRAY->value));
         $this->assertSame([12.5, 13.3], $valueConverter->convert([12.5, 13.3], DataTypeEnum::FLOAT_ARRAY->value));
-        $this->assertSame(true, $valueConverter->convert(1, DataTypeEnum::BOOL->value));
+        $this->assertTrue($valueConverter->convert(1, DataTypeEnum::BOOL->value));
         $this->assertSame([true, false, true, false], $valueConverter->convert([1, 0, 'true', '0'], DataTypeEnum::BOOL_ARRAY->value));
         $this->assertSame([51.4874004, -0.016055], $valueConverter->convert([51.4874004, -0.016055], DataTypeEnum::GEOPOINT->value));
         $this->assertSame([[51.4874004, -0.016055], null], $valueConverter->convert([[51.4874004, -0.016055], null], DataTypeEnum::GEOPOINT_ARRAY->value));
 
         foreach (DataTypeEnum::cases() as $type) {
-            $this->assertSame(null, $valueConverter->convert(null, $type->value));
+            $this->assertNull($valueConverter->convert(null, $type->value));
         }
 
         foreach ([
