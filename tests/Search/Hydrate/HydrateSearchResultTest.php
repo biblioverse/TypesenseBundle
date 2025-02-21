@@ -4,7 +4,6 @@ namespace Biblioverse\TypesenseBundle\Tests\Search\Hydrate;
 
 use Biblioverse\TypesenseBundle\Search\Hydrate\HydrateSearchResult;
 use Biblioverse\TypesenseBundle\Search\Results\SearchResults;
-use Biblioverse\TypesenseBundle\Search\Results\SearchResultsHydrated;
 use Biblioverse\TypesenseBundle\Tests\Entity\Product;
 use Biblioverse\TypesenseBundle\Tests\KernelTestCase;
 
@@ -24,7 +23,6 @@ class HydrateSearchResultTest extends KernelTestCase
 
         $searchResultsHydrated = $this->get(HydrateSearchResult::class)->hydrate(Product::class, $searchResults);
 
-        $this->assertInstanceOf(SearchResultsHydrated::class, $searchResultsHydrated);
         $objects = iterator_to_array($searchResultsHydrated->getIterator());
         $this->assertCount(2, $objects);
         $this->assertArrayHasKey(1, $objects);
@@ -39,7 +37,6 @@ class HydrateSearchResultTest extends KernelTestCase
 
         $searchResultsHydrated = $this->get(HydrateSearchResult::class)->hydrate(Product::class, $searchResults);
 
-        $this->assertInstanceOf(SearchResultsHydrated::class, $searchResultsHydrated);
         $objects = iterator_to_array($searchResultsHydrated->getIterator());
         $this->assertCount(0, $objects);
     }
@@ -50,7 +47,6 @@ class HydrateSearchResultTest extends KernelTestCase
 
         $searchResultsHydrated = $this->get(HydrateSearchResult::class)->hydrate(Product::class, $searchResults);
 
-        $this->assertInstanceOf(SearchResultsHydrated::class, $searchResultsHydrated);
         $objects = iterator_to_array($searchResultsHydrated->getIterator());
         $this->assertCount(0, $objects);
     }

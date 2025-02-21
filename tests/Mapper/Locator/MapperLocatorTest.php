@@ -3,11 +3,9 @@
 namespace Biblioverse\TypesenseBundle\Tests\Mapper\Locator;
 
 use Biblioverse;
-use Biblioverse\TypesenseBundle\Mapper\DataGeneratorInterface;
 use Biblioverse\TypesenseBundle\Mapper\Entity\EntityTransformerInterface;
 use Biblioverse\TypesenseBundle\Mapper\Locator\InvalidTypeMapperException;
 use Biblioverse\TypesenseBundle\Mapper\Locator\MapperLocator;
-use Biblioverse\TypesenseBundle\Mapper\MappingGeneratorInterface;
 use Biblioverse\TypesenseBundle\Tests\Entity\Product;
 use Biblioverse\TypesenseBundle\Tests\TestKernel;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -27,7 +25,8 @@ class MapperLocatorTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
 
         $this->assertSame(1, $locator->countDataGenerator(), 'The locator should have exactly 1 data generator.');
         $this->assertTrue($locator->hasDataGenerator('products'), 'The locator should have the products service.');
-        $this->assertInstanceOf(DataGeneratorInterface::class, $locator->getDataGenerator('products'), 'The locator should return an instance of DataGeneratorInterface.');
+
+        $locator->getDataGenerator('products');
     }
 
     public function testLocatorUnknownService(): void
@@ -79,7 +78,6 @@ class MapperLocatorTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
         $result = $mapperLocator->getMappers();
 
         $this->assertArrayHasKey('products', $result);
-        $this->assertInstanceOf(MappingGeneratorInterface::class, $result['products']);
     }
 
     public function testLocatorGetMappingGenerator(): void
@@ -92,14 +90,13 @@ class MapperLocatorTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
         $result = $mapperLocator->getMappers();
 
         $this->assertArrayHasKey('products', $result);
-        $this->assertInstanceOf(MappingGeneratorInterface::class, $result['products']);
         $this->assertSame(1, $mapperLocator->countDataGenerator());
-        $this->assertInstanceOf(DataGeneratorInterface::class, $mapperLocator->getDataGenerator('products'));
+        // Make sure the mapping generator don't crash. Calling instanceof is making phpunit unhappy because of already narrowed type.
+        $mapperLocator->getDataGenerator('products');
 
         $entityMappers = $mapperLocator->getEntityMappers(Product::class);
         $this->assertCount(1, $entityMappers);
         $this->assertArrayHasKey('products', $entityMappers);
-        $this->assertInstanceOf(MappingGeneratorInterface::class, $entityMappers['products']);
     }
 
     public function testNoEntityTransformer(): void
@@ -128,7 +125,9 @@ class MapperLocatorTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
             entityMapping: [$myClass::class => ['test']],
         );
 
-        $this->assertSame(['test' => $testEntityTransformer], $mapperLocator->getEntityTransformers($myClass::class));
+        $transformer = $mapperLocator->getEntityTransformers($myClass::class);
+        $this->assertArrayHasKey('test', $transformer);
+        $this->assertSame(spl_object_hash($testEntityTransformer), spl_object_hash($transformer['test']));
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Biblioverse\TypesenseBundle\Tests;
 
-use Biblioverse\TypesenseBundle\Client\ClientInterface;
 use Biblioverse\TypesenseBundle\Mapper\Locator\MapperLocator;
 use Biblioverse\TypesenseBundle\Tests\Client\ServiceWithClient;
 
@@ -26,8 +25,8 @@ class ContainerTest extends KernelTestCase
         $service = $container->get(ServiceWithClient::class);
         $this->assertInstanceOf(ServiceWithClient::class, $service);
 
-        $client = $service->getClient();
-        $this->assertInstanceOf(ClientInterface::class, $client);
+        // Do the call to make sure the client is working.
+        $service->getClient();
     }
 
     public function testClientFactoryInvalidUrl(): void
