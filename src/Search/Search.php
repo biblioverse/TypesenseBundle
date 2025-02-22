@@ -5,6 +5,7 @@ namespace Biblioverse\TypesenseBundle\Search;
 use Biblioverse\TypesenseBundle\Client\ClientInterface;
 use Biblioverse\TypesenseBundle\Exception\SearchException;
 use Biblioverse\TypesenseBundle\Query\SearchQueryInterface;
+use Biblioverse\TypesenseBundle\Query\SearchQueryWithCollectionInterface;
 use Biblioverse\TypesenseBundle\Search\Results\SearchResults;
 use Http\Client\Exception;
 use Typesense\Exceptions\TypesenseClientError;
@@ -32,15 +33,14 @@ class Search implements SearchInterface
     }
 
     /**
-     * @param SearchQueryInterface[] $searchQueries
-     * @param array<string, mixed>   $queryParameters
+     * @param SearchQueryWithCollectionInterface[] $searchQueries
+     * @param array<string, mixed>                 $queryParameters
      *
      * @return SearchResults[]
      */
-    public function multiSearch(string $collectionName, array $searchQueries, array $queryParameters = []): array
+    public function multiSearch(array $searchQueries, array $queryParameters = []): array
     {
-        // TODO Make this more generic
-        $rawSearchQueries = array_map(fn (SearchQueryInterface $searchQuery) => ['collection' => $collectionName] + $searchQuery->toArray(), $searchQueries);
+        $rawSearchQueries = array_map(fn (SearchQueryWithCollectionInterface $searchQueryWithCollection) => ['collection' => $searchQueryWithCollection->getCollection()] + $searchQueryWithCollection->toArray(), $searchQueries);
         try {
             /** @var array{'results'?: array<string, mixed>} $rawResult * */
             $rawResult = $this->client->getMultiSearch()

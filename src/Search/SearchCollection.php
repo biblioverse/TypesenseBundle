@@ -4,6 +4,8 @@ namespace Biblioverse\TypesenseBundle\Search;
 
 use Biblioverse\TypesenseBundle\Query\SearchQuery;
 use Biblioverse\TypesenseBundle\Query\SearchQueryInterface;
+use Biblioverse\TypesenseBundle\Query\SearchQueryWithCollectionInterface;
+use Biblioverse\TypesenseBundle\Query\SearchQueryWithWithCollectionAdapter;
 use Biblioverse\TypesenseBundle\Search\Hydrate\HydrateSearchResultInterface;
 use Biblioverse\TypesenseBundle\Search\Results\SearchResults;
 use Biblioverse\TypesenseBundle\Search\Results\SearchResultsHydrated;
@@ -40,14 +42,16 @@ class SearchCollection implements SearchCollectionInterface
     }
 
     /**
-     * @param SearchQueryInterface[] $searchQueries
-     * @param array<string, mixed>   $queryParameters
+     * @param SearchQueryWithCollectionInterface[] $searchQueries
+     * @param array<string, mixed>                 $queryParameters
      *
      * @return array<SearchResultsHydrated<T>>
      */
     public function multisearch(array $searchQueries, array $queryParameters = []): array
     {
-        $searchResults = $this->search->multisearch($this->collectionName, $searchQueries, $queryParameters);
+        $searchQueriesWithCollection = array_map(fn (SearchQueryInterface $searchQuery) => new SearchQueryWithWithCollectionAdapter($searchQuery, $this->collectionName), $searchQueries);
+
+        $searchResults = $this->search->multisearch($searchQueriesWithCollection, $queryParameters);
 
         return array_map(fn (SearchResults $searchResults) => $this->hydrateSearchResult->hydrate($this->entityClass, $searchResults), $searchResults);
     }
@@ -60,6 +64,8 @@ class SearchCollection implements SearchCollectionInterface
      */
     public function multisearchRaw(array $searchQueries, array $queryParameters = []): array
     {
-        return $this->search->multisearch($this->collectionName, $searchQueries, $queryParameters);
+        $searchQueriesWithCollection = array_map(fn (SearchQueryInterface $searchQuery) => new SearchQueryWithWithCollectionAdapter($searchQuery, $this->collectionName), $searchQueries);
+
+        return $this->search->multisearch($searchQueriesWithCollection, $queryParameters);
     }
 }
