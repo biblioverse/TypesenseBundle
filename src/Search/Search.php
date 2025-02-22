@@ -4,7 +4,7 @@ namespace Biblioverse\TypesenseBundle\Search;
 
 use Biblioverse\TypesenseBundle\Client\ClientInterface;
 use Biblioverse\TypesenseBundle\Exception\SearchException;
-use Biblioverse\TypesenseBundle\Query\SearchQuery;
+use Biblioverse\TypesenseBundle\Query\SearchQueryInterface;
 use Biblioverse\TypesenseBundle\Search\Results\SearchResults;
 use Http\Client\Exception;
 use Typesense\Exceptions\TypesenseClientError;
@@ -18,7 +18,7 @@ class Search implements SearchInterface
     /**
      * @throws SearchException
      */
-    public function search(string $collectionName, SearchQuery $searchQuery): SearchResults
+    public function search(string $collectionName, SearchQueryInterface $searchQuery): SearchResults
     {
         try {
             /** @var array<string, mixed> $result */
@@ -32,17 +32,19 @@ class Search implements SearchInterface
     }
 
     /**
-     * @param SearchQuery[] $searchQueries
+     * @param SearchQueryInterface[] $searchQueries
+     * @param array<string, mixed>   $queryParameters
      *
      * @return SearchResults[]
      */
-    public function multiSearch(string $collectionName, array $searchQueries): array
+    public function multiSearch(string $collectionName, array $searchQueries, array $queryParameters = []): array
     {
-        $rawSearchQueries = array_map(fn (SearchQuery $searchQuery) => ['collection' => $collectionName] + $searchQuery->toArray(), $searchQueries);
+        // TODO Make this more generic
+        $rawSearchQueries = array_map(fn (SearchQueryInterface $searchQuery) => ['collection' => $collectionName] + $searchQuery->toArray(), $searchQueries);
         try {
             /** @var array{'results'?: array<string, mixed>} $rawResult * */
             $rawResult = $this->client->getMultiSearch()
-                ->perform(['searches' => $rawSearchQueries]); // TODO Support for query parameters
+                ->perform(['searches' => $rawSearchQueries], $queryParameters);
 
             $results = $rawResult['results'] ?? [];
             $response = [];
@@ -52,9 +54,7 @@ class Search implements SearchInterface
              */
             foreach ($results as $index => $result) {
                 if (isset($result['error']) && isset($result['code'])) {
-                    $code = is_resource($result['code']) || !is_int($result['code']) ? 0 : $result['code'];
-                    $error = is_resource($result['error']) || !is_string($result['error']) ? 'Error' : $result['error'];
-                    throw new SearchException(sprintf('Multi-search sub-result error at %d: %s %s', $index, $code, $error));
+                    $this->throwMultiSearchException($index, $result);
                 }
                 $response[] = new SearchResults($result);
             }
@@ -63,5 +63,16 @@ class Search implements SearchInterface
         } catch (TypesenseClientError|Exception $e) {
             throw new SearchException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    /**
+     * @param array<string, mixed> $result
+     */
+    private function throwMultiSearchException(int $index, array $result): void
+    {
+        $code = is_resource($result['code']) || !is_int($result['code']) ? 0 : $result['code'];
+        $error = is_resource($result['error']) || !is_string($result['error']) ? 'Error' : $result['error'];
+
+        throw new SearchException(sprintf('Multi-search sub-result error at %d: %s %s', $index, $code, $error));
     }
 }
