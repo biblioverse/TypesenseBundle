@@ -93,6 +93,14 @@ jobs:
           name: coverage-report
           path: tests/coverage/clover.xml
 
+      - name: Upload html-coverage
+        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
+        uses: actions/upload-artifact@v4
+        with:
+          overwrite: true
+          name: coverage-report-web
+          path: tests/coverage/html-coverage/
+
       - name: Coverage Report as Comment (Clover)
         uses: lucassabreu/comment-coverage-clover@main
         if: github.event_name == 'pull_request' && matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
