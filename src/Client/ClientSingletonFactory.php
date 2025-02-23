@@ -63,7 +63,7 @@ class ClientSingletonFactory
         return array_merge($this->defaultConfig, $config);
     }
 
-    public function getClient(): HttpClient
+    protected function getClient(): HttpClient
     {
         $client = $this->httpClient ?? (new Psr18ClientDiscovery())->find();
 
