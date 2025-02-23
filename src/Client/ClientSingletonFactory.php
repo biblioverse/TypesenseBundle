@@ -2,6 +2,9 @@
 
 namespace Biblioverse\TypesenseBundle\Client;
 
+use Http\Client\Common\HttpMethodsClient;
+use Http\Client\Common\HttpMethodsClientInterface;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 use Psr\Http\Client\ClientInterface as HttpClient;
 use Typesense\Client;
@@ -63,8 +66,14 @@ class ClientSingletonFactory
         return array_merge($this->defaultConfig, $config);
     }
 
-    public function getClient(): HttpClient
+    protected function getClient(): HttpMethodsClientInterface
     {
-        return $this->httpClient ?? (new Psr18ClientDiscovery())->find();
+        $client = $this->httpClient ?? (new Psr18ClientDiscovery())->find();
+
+        return new HttpMethodsClient(
+            $client,
+            Psr17FactoryDiscovery::findRequestFactory(),
+            Psr17FactoryDiscovery::findStreamFactory()
+        );
     }
 }
