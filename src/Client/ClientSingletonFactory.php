@@ -66,7 +66,7 @@ class ClientSingletonFactory
         return array_merge($this->defaultConfig, $config);
     }
 
-    protected function getClient(): HttpMethodsClientInterface
+    private function getClient(): HttpMethodsClientInterface
     {
         $client = $this->httpClient ?? (new Psr18ClientDiscovery())->find();
 

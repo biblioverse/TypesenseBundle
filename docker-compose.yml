@@ -8,18 +8,25 @@ services:
     tty: true
     environment:
       - PHP_IDE_CONFIG=serverName=typesensebundle
+      - TYPESENSE_URL=http://typesense:8108
+      - TYPESENSE_API_KEY=xyz
     extra_hosts:
       - host.docker.internal:host-gateway
     networks:
       - default
-#  typesense:
-#      image: typesense/typesense:27.1
-#      restart: on-failure
-#      ports:
-#        - 8983
-#        - "9908:8108"
-#      volumes:
-#        - searchdata:/data
-#      command: '--data-dir /data --api-key=xyz --enable-cors'
+  typesense:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8108/health"]
+    links:
+      - php
+    image: typesense/typesense:28.0
+    restart: on-failure
+    volumes:
+      - typesense-server-data:/data
+    environment:
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_API_KEY: xyz
+      TYPESENSE_ENABLE_CORS: true
 volumes:
   searchdata:
+  typesense-server-data:
