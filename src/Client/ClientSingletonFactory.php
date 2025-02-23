@@ -65,6 +65,13 @@ class ClientSingletonFactory
 
     public function getClient(): HttpClient
     {
-        return $this->httpClient ?? (new Psr18ClientDiscovery())->find();
+        $client = $this->httpClient ?? (new Psr18ClientDiscovery())->find();
+
+        // Fix upstream bug that calls 'send' instead of 'sendRequest'.
+        if (!method_exists($client, 'send')) {
+            return new WrapPSR18WithSendMethod($client);
+        }
+
+        return $client;
     }
 }
