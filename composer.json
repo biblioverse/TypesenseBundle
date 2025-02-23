@@ -5,6 +5,7 @@
   "minimum-stability": "stable",
   "require": {
     "php": ">=8.2",
+    "psr/http-factory": "^1.0",
     "php-http/discovery": "^1.20",
     "psr/http-client": "^1.0",
     "psr/http-client-implementation": "1.0",
