@@ -36,6 +36,18 @@ jobs:
             php-version: "8.2"
           - composer-versions: "lowest"
             php-version: "8.4"
+
+    services:
+      typesense:
+        image: typesense/typesense:28.0
+        ports:
+          - 8108:8108/tcp
+        volumes:
+          - /tmp/typesense-server-data:/data
+        env:
+          TYPESENSE_DATA_DIR: /data
+          TYPESENSE_API_KEY: xyz
+          TYPESENSE_ENABLE_CORS: true
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v4"
