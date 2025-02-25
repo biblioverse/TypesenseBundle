@@ -2,6 +2,25 @@
 ## [Unreleased]
 
 
+<a name="v0.0.6"></a>
+## [v0.0.6](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.5...v0.0.6)
+
+### Feat
+
+* Remove support for php 8.1
+
+### Fix
+
+* upstream Typesense-php issue with PSR-18 client
+
+### BREAKING CHANGE
+
+
+ClientSingletonFactory->getClient is now private
+
+Remove php 8.1 support
+
+
 <a name="v0.0.5"></a>
 ## [v0.0.5](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.4...v0.0.5)
 
