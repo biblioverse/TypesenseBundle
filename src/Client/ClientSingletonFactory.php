@@ -2,6 +2,9 @@
 
 namespace Biblioverse\TypesenseBundle\Client;
 
+use Http\Client\Common\HttpMethodsClient;
+use Http\Client\Common\HttpMethodsClientInterface;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 use Psr\Http\Client\ClientInterface as HttpClient;
 use Typesense\Client;
@@ -63,15 +66,14 @@ class ClientSingletonFactory
         return array_merge($this->defaultConfig, $config);
     }
 
-    protected function getClient(): HttpClient
+    protected function getClient(): HttpMethodsClientInterface
     {
         $client = $this->httpClient ?? (new Psr18ClientDiscovery())->find();
 
-        // Fix upstream bug that calls 'send' instead of 'sendRequest'.
-        if (!method_exists($client, 'send')) {
-            return new WrapPSR18WithSendMethod($client);
-        }
-
-        return $client;
+        return new HttpMethodsClient(
+            $client,
+            Psr17FactoryDiscovery::findRequestFactory(),
+            Psr17FactoryDiscovery::findStreamFactory()
+        );
     }
 }

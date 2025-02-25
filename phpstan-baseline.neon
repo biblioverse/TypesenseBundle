@@ -1,13 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Instanceof between Psr\\Http\\Message\\RequestInterface and Psr\\Http\\Message\\RequestInterface will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Client/WrapPSR18WithSendMethod.php
-			reportUnmatched: false
-
-		-
 			message: '#^Call to function method_exists\(\) with ''PHPUnit\\\\Framework\\\\TestCase'' and ''isArray'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
