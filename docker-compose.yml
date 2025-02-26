@@ -15,8 +15,6 @@ services:
     networks:
       - default
   typesense:
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8108/health"]
     links:
       - php
     image: typesense/typesense:28.0
