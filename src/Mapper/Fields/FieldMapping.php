@@ -69,10 +69,30 @@ class FieldMapping implements FieldMappingInterface
         $this->type = $type instanceof DataTypeEnum ? $type->value : $type;
     }
 
+    /**
+     * @template TKey
+     * @template TValue
+     *
+     * @param array<TKey, TValue> $array
+     *
+     * @return array<TKey, TValue>
+     */
+    protected static function array_filter_recursive(array $array, ?callable $callback = null): array
+    {
+        $array = is_callable($callback) ? array_filter($array, $callback) : array_filter($array);
+        foreach ($array as &$value) {
+            if (is_array($value)) {
+                $value = self::array_filter_recursive($value, $callback);
+            }
+        }
+
+        return $array;
+    }
+
     public function toArray(): array
     {
         // Make sure to "ksort" values to keep the order consistent
-        return array_filter([
+        return self::array_filter_recursive([
             'drop' => $this->drop,
             'facet' => $this->facet,
             'index' => $this->index,
