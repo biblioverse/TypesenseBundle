@@ -4,6 +4,7 @@ namespace Biblioverse\TypesenseBundle\Tests;
 
 use Biblioverse\TypesenseBundle\Mapper\Locator\MapperLocator;
 use Biblioverse\TypesenseBundle\Tests\Client\ServiceWithClient;
+use Biblioverse\TypesenseBundle\Tests\Entity\Product;
 
 class ContainerTest extends KernelTestCase
 {
@@ -27,6 +28,31 @@ class ContainerTest extends KernelTestCase
 
         // Do the call to make sure the client is working.
         $service->getClient();
+    }
+
+    public function testClientFactoryFilterSubMapping(): void
+    {
+        self::bootKernel([
+            'configs' => [TestKernel::CONFIG_KEY => 'config/packages/biblioverse_typesense_embedding.yaml'],
+        ]);
+        $mapperLocator = $this->get(MapperLocator::class);
+        $mappingGenerators = $mapperLocator->getEntityMappers(Product::class);
+        self::assertArrayHasKey('products', $mappingGenerators);
+        $mapping = $mappingGenerators['products']->getMapping();
+        $fields = $mapping->getFields();
+        self::assertCount(2, $fields);
+        $embeddingValues = $fields[1]->toArray();
+        self::assertSame(
+            [
+                'index' => true,
+                'name' => 'embedding',
+                'num_dims' => 768,
+                'type' => 'float[]',
+                'embed' => [
+                    'from' => ['tags', 'summary'],
+                    'model_config' => ['model_name' => 'mymodel'],
+                ],
+            ], $embeddingValues);
     }
 
     public function testClientFactoryInvalidUrl(): void
