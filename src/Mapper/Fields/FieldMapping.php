@@ -32,8 +32,8 @@ use Biblioverse\TypesenseBundle\Type\DataTypeEnum;
  * }
  * @phpstan-type FieldMappingEmbedModelValueArray array{
  *   'model_name':string,
- *   'api_key'?:string,
- *   'url'?:string
+ *   'api_key'?:?string,
+ *   'url'?:?string
  * }
  */
 class FieldMapping implements FieldMappingInterface
@@ -109,7 +109,7 @@ class FieldMapping implements FieldMappingInterface
             'type' => $this->type,
             'vec_dist' => $this->vecDist,
             'embed' => $this->embed,
-        ], fn ($value) => $value !== null);
+        ], fn ($value) => $value !== null && $value !== '');
     }
 
     public function getType(): string

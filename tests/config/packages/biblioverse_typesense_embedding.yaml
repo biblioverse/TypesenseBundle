@@ -1,0 +1,28 @@
+parameters:
+  env(TYPESENSE_URL): 'http://typesense:8108'
+  env(TYPESENSE_KEY): 'mykey'
+  env(TYPESENSE_EMBED_MODEL): 'mymodel'
+  env(TYPESENSE_EMBED_KEY): ''
+  env(TYPESENSE_EMBED_URL): ''
+biblioverse_typesense:
+  typesense:
+    uri: '%env(TYPESENSE_URL)%'
+    key: '%env(TYPESENSE_KEY)%'
+  collections:
+    books:
+      entity: 'Biblioverse\TypesenseBundle\Tests\Entity\Product'
+      name: 'products'
+      mapping:
+        fields:
+          embedding:
+            name: embedding
+            type: float[]
+            index: true
+            mapped: false
+            numDim: 768
+            embed:
+              from: [ "tags", "summary" ]
+              model_config:
+                model_name: '%env(TYPESENSE_EMBED_MODEL)%'
+                api_key: '%env(TYPESENSE_EMBED_KEY)%'
+                url: '%env(TYPESENSE_EMBED_URL)%'
