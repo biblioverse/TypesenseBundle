@@ -2,6 +2,15 @@
 ## [Unreleased]
 
 
+<a name="v0.0.7"></a>
+## [v0.0.7](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.6...v0.0.7)
+
+### Fix
+
+* Remove buggy healtch check
+* **indexation:** remove empty values from subarrays
+
+
 <a name="v0.0.6"></a>
 ## [v0.0.6](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.5...v0.0.6)
 
