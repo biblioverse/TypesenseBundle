@@ -15,6 +15,8 @@ use Biblioverse\TypesenseBundle\Type\DataTypeEnum;
  *  'index'?:bool|null,
  *  'infix'?:bool|null,
  *  'rangeIndex'?:bool|null,
+ *  'token_separators'?:?array<string>,
+ *  'symbols_to_index'?:?array<string>,
  *  'sort'?:bool|null,
  *  'stem'?:bool|null,
  *  'store'?:bool|null,
@@ -46,6 +48,8 @@ class FieldMapping implements FieldMappingInterface
 
     /**
      * @param FieldMappingEmbedArray $embed
+     * @param array<string>          $tokenSeparators
+     * @param array<string>          $symbolsToIndex
      */
     public function __construct(
         public string $name,
@@ -65,6 +69,8 @@ class FieldMapping implements FieldMappingInterface
         public ?string $vecDist = null,
         public ?array $embed = null,
         public bool $mapped = true,
+        public ?array $tokenSeparators = null,
+        public ?array $symbolsToIndex = null,
     ) {
         $this->type = $type instanceof DataTypeEnum ? $type->value : $type;
     }
@@ -106,10 +112,12 @@ class FieldMapping implements FieldMappingInterface
             'sort' => $this->sort,
             'stem' => $this->stem,
             'store' => $this->store,
+            'symbols_to_index' => $this->symbolsToIndex,
+            'token_separators' => $this->tokenSeparators,
             'type' => $this->type,
             'vec_dist' => $this->vecDist,
             'embed' => $this->embed,
-        ], fn ($value) => $value !== null && $value !== '');
+        ], fn ($value) => $value !== null && $value !== '' && $value !== []);
     }
 
     public function getType(): string
@@ -155,6 +163,8 @@ class FieldMapping implements FieldMappingInterface
             $config['vecDist'] ?? null,
             $config['embed'] ?? null,
             $config['mapped'] ?? true,
+            $config['token_separators'] ?? null,
+            $config['symbols_to_index'] ?? null
         );
 
         $result->entityAttribute = $config['entity_attribute'] ?? null;
