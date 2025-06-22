@@ -8,6 +8,7 @@ use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -91,6 +92,18 @@ class TestKernel extends Kernel
         parent::shutdown();
 
         $this->clearCache();
+    }
+
+    protected function build(ContainerBuilder $containerBuilder): void
+    {
+        // Add with_constructor_extractor to remove deprecation (version >=7)
+        // The constant hack is just for rector to not consider this branch as "Always true" and remove it
+        if (constant(Kernel::class.'::VERSION_ID') < 70000) {
+            return;
+        }
+        $containerBuilder->prependExtensionConfig('framework', [
+            'property_info' => ['with_constructor_extractor' => false],
+        ]);
     }
 
     private function clearCache(): void
