@@ -5,6 +5,7 @@ namespace Biblioverse\TypesenseBundle\Search\Hydrate;
 use Biblioverse\TypesenseBundle\Search\Results\SearchResults;
 use Biblioverse\TypesenseBundle\Search\Results\SearchResultsHydrated;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * @template T of object
@@ -27,13 +28,13 @@ class HydrateSearchResult implements HydrateSearchResultInterface
     public function hydrate(string $class, SearchResults $searchResults): SearchResultsHydrated
     {
         // Fetch the primary key of the entity
+        /** @var ClassMetadata<T> $classMetadata */
         $classMetadata = $this->entityManager->getClassMetadata($class);
         // TODO Support of composed primary keys ?
-        $primaryKey = $classMetadata->isIdentifierComposite ? null : $classMetadata->getSingleIdReflectionProperty();
-        $primaryKeyName = $primaryKey?->getName() ?? 'id';
+        $primaryKeyName = $classMetadata->isIdentifierComposite ? null : $this->getIdNameFromMetadata($classMetadata);
 
         $hits = $searchResults['hits'] ?? [];
-        $ids = array_map(function (mixed $result) use ($primaryKeyName): ?int {
+        $ids = array_map(static function (mixed $result) use ($primaryKeyName): ?int {
             if (!is_array($result) || !is_array($result['document']) || !is_scalar($result['document'][$primaryKeyName] ?? null)) {
                 return null;
             }
@@ -73,5 +74,18 @@ class HydrateSearchResult implements HydrateSearchResultInterface
         $result = SearchResultsHydrated::fromResultAndCollection($searchResults, $hydratedResults);
 
         return $result;
+    }
+
+    /**
+     * @param ClassMetadata<object> $classMetadata
+     */
+    private function getIdNameFromMetadata(ClassMetadata $classMetadata): string
+    {
+        $identifiers = $classMetadata->getIdentifier();
+        if ($identifiers === []) {
+            throw new \BadMethodCallException('Unable to read identifier field for class '.$classMetadata->getName());
+        }
+
+        return $identifiers[0];
     }
 }
