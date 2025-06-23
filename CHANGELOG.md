@@ -2,6 +2,19 @@
 ## [Unreleased]
 
 
+<a name="v0.0.8"></a>
+## [v0.0.8](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.7...v0.0.8)
+
+### Feat
+
+* Add more supported fields to the mapping configuration
+
+### Fix
+
+* Remove deprecation with_constructor_extractor
+* Remove deprecation on doctrine/orm accessing reflFields
+
+
 <a name="v0.0.7"></a>
 ## [v0.0.7](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.6...v0.0.7)
 
