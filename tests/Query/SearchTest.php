@@ -91,6 +91,163 @@ class SearchTest extends TestCase
         $this->assertSame('My Book title', $searchResults->getResults()[0]['title']);
     }
 
+    public function testMultiSearchUnion(): void
+    {
+        $client = $this->withMultiSearchResult([
+            'found' => 31,
+            'hits' => [
+                0 => [
+                    'collection' => 'books-2025-10-03-11-19-09',
+                    'document' => [
+                        'age' => 'enum.agecategories.notset',
+                        'authors' => [
+                            0 => 'Peter Yaworski',
+                        ],
+                        'book_path' => 'p/peter-yaworski/real-world-bug-hunting-a-field-guide-to-web-hacking/',
+                        'extension' => 'epub',
+                        'favorite' => [],
+                        'hidden' => [],
+                        'id' => '136',
+                        'publisher' => 'No Starch Press, Inc.',
+                        'read' => [],
+                        'sortable_id' => 136,
+                        'summary' => '"Real-World Bug Hunting: A Field Guide to Web Hacking" by Peter Yaworski is a practical guide that equips readers with the knowledge and techniques needed to identify and exploit vulnerabilities in web applications. Through real-world examples and hands-on exercises, the book offers valuable insights into the world of ethical hacking and bug bounty programs.',
+                        'summary_empty' => false,
+                        'tags' => [
+                            0 => 'Informatique',
+                            1 => 'Sécurité Informatique',
+                            2 => 'Hacking',
+                            3 => 'Développement Web',
+                        ],
+                        'tags_empty' => false,
+                        'title' => 'Real-World Bug Hunting: A Field Guide to Web Hacking',
+                        'updated' => 1735038510,
+                        'verified' => true,
+                    ],
+                    'highlight' => [
+                        'title' => [
+                            'matched_tokens' => [
+                                0 => 'A',
+                            ],
+                            'snippet' => 'Real-World Bug Hunting: <mark>A</mark> Field Guide to Web Hacking',
+                        ],
+                    ],
+                    'highlights' => [
+                        0 => [
+                            'field' => 'title',
+                            'matched_tokens' => [
+                                0 => 'A',
+                            ],
+                            'snippet' => 'Real-World Bug Hunting: <mark>A</mark> Field Guide to Web Hacking',
+                        ],
+                    ],
+                    'search_index' => 0,
+                    'text_match' => 578730123365187705,
+                    'text_match_info' => [
+                        'best_field_score' => '1108091338752',
+                        'best_field_weight' => 15,
+                        'fields_matched' => 1,
+                        'num_tokens_dropped' => 0,
+                        'score' => '578730123365187705',
+                        'tokens_matched' => 1,
+                        'typo_prefix_score' => 0,
+                    ],
+                ],
+                1 => [
+                    'collection' => 'books-2025-10-03-11-19-09',
+                    'document' => [
+                        'age' => 'enum.agecategories.notset',
+                        'authors' => [
+                            0 => 'author1',
+                        ],
+                        'book_path' => 'sample.pdf',
+                        'extension' => 'epub',
+                        'favorite' => [],
+                        'hidden' => [],
+                        'id' => '134',
+                        'publisher' => 'No Starch Press',
+                        'read' => [],
+                        'sortable_id' => 134,
+                        'summary' => '"mybook" by author1 provides a practical guide to penetration testing techniques',
+                        'summary_empty' => false,
+                        'tags' => [
+                            0 => 'Cybersecurity',
+                            1 => 'Ethical Hacking',
+                            2 => 'Information Security',
+                            3 => 'Technology',
+                            4 => 'Computer Science',
+                            5 => 'Informatique',
+                            7 => 'Hacking',
+                        ],
+                        'tags_empty' => false,
+                        'title' => 'mybook about blabla',
+                        'updated' => 1735550597,
+                        'verified' => false,
+                    ],
+                    'highlight' => [
+                        'title' => [
+                            'matched_tokens' => [
+                                0 => 'A',
+                            ],
+                            'snippet' => 'blabla',
+                        ],
+                    ],
+                    'highlights' => [
+                        0 => [
+                            'field' => 'title',
+                            'matched_tokens' => [
+                                0 => 'A',
+                            ],
+                            'snippet' => 'blabla',
+                        ],
+                    ],
+                    'search_index' => 0,
+                    'text_match' => 578730123365187705,
+                    'text_match_info' => [
+                        'best_field_score' => '1108091338752',
+                        'best_field_weight' => 15,
+                        'fields_matched' => 1,
+                        'num_tokens_dropped' => 0,
+                        'score' => '578730123365187705',
+                        'tokens_matched' => 1,
+                        'typo_prefix_score' => 0,
+                    ],
+                ],
+            ],
+            'out_of' => 71,
+            'page' => 1,
+            'search_cutoff' => false,
+            'search_time_ms' => 0,
+            'union_request_params' => [
+                0 => [
+                    'collection' => 'books-2025-10-03-11-19-09',
+                    'first_q' => 'a',
+                    'found' => 22,
+                    'per_page' => 2,
+                    'q' => 'a',
+                ],
+                1 => [
+                    'collection' => 'books-2025-10-03-11-19-09',
+                    'found' => 9,
+                    'per_page' => 2,
+                    'q' => 'b',
+                ],
+            ],
+        ]);
+        $search = new Search($client);
+        $searchResults = $search->multiSearch([
+            new SearchQueryWithWithCollectionAdapter(new SearchQuery(q: 'a', queryBy: 'title'), 'books'),
+            new SearchQueryWithWithCollectionAdapter(new SearchQuery(q: 'b', queryBy: 'title'), 'books'),
+        ], ['union' => true]);
+        $this->assertCount(1, $searchResults);
+        $this->assertEquals(31, $searchResults[0]->getFound());
+        $this->assertCount(2, $searchResults[0]->getResults());
+        $this->assertArrayHasKey('collection', $searchResults[0]->getHits()[0]);
+        $this->assertEquals('books-2025-10-03-11-19-09', $searchResults[0]->getHits()[0]['collection']);
+        $this->assertEquals(2, $searchResults[0]->getPerPage());
+        $this->assertEquals(ceil(31 / 2), $searchResults[0]->getTotalPage());
+    }
+
     public function testMultiSearch(): void
     {
         $client = $this->withMultiSearchResult([

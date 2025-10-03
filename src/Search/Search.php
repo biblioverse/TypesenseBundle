@@ -42,9 +42,14 @@ class Search implements SearchInterface
     {
         $rawSearchQueries = array_map(fn (SearchQueryWithCollectionInterface $searchQueryWithCollection) => ['collection' => $searchQueryWithCollection->getCollection()] + $searchQueryWithCollection->toArray(), $searchQueries);
         try {
-            /** @var array{'results'?: array<string, mixed>} $rawResult * */
+            /** @var array{'results'?: array<string, mixed>, 'union_request_params'?: array<string, mixed>} $rawResult * */
             $rawResult = $this->client->getMultiSearch()
                 ->perform(['searches' => $rawSearchQueries], $queryParameters);
+
+            // Union search has only one result
+            if (array_key_exists('union_request_params', $rawResult)) {
+                return [new SearchResults($rawResult)];
+            }
 
             $results = $rawResult['results'] ?? [];
             $response = [];
@@ -53,7 +58,7 @@ class Search implements SearchInterface
              * @var array<string,mixed> $result
              */
             foreach ($results as $index => $result) {
-                if (isset($result['error']) && isset($result['code'])) {
+                if (isset($result['error'], $result['code'])) {
                     $this->throwMultiSearchException($index, $result);
                 }
                 $response[] = new SearchResults($result);
