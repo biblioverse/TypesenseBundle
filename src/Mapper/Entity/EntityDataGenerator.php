@@ -16,7 +16,7 @@ class EntityDataGenerator extends AbstractEntityDataGenerator
      * @param EntityTransformerInterface<T> $entityTransformer
      */
     public function __construct(
-        readonly EntityManagerInterface $entityManager,
+        EntityManagerInterface $entityManager,
         private readonly EntityTransformerInterface $entityTransformer,
         private readonly string $className,
     ) {
