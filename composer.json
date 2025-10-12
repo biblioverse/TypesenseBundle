@@ -18,7 +18,7 @@
     "typesense/typesense-php": "^4.9|^5.0"
   },
   "require-dev": {
-    "doctrine/doctrine-bundle": "^2.0",
+    "doctrine/doctrine-bundle": "^2.0 || ^3.0",
     "doctrine/doctrine-fixtures-bundle": "^4.0",
     "doctrine/orm": "^3.3",
     "friendsofphp/php-cs-fixer": "dev-master",
