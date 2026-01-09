@@ -54,7 +54,7 @@ class AutopopulateTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
 
         // Mock the PopulateService to assert 'fillData' is called once
         $populateMock = $this->getMockBuilder(PopulateService::class)
-            ->setConstructorArgs([$this->createMock(ClientInterface::class)])
+            ->setConstructorArgs([$this->createStub(ClientInterface::class)])
             ->getMock();
 
         $populateMock->expects($this->once())
@@ -73,18 +73,16 @@ class AutopopulateTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
         $entityManager = $this->get(Doctrine\ORM\EntityManagerInterface::class);
         $entityManager->persist($product);
         $entityManager->flush();
-
-        $this->assertTrue(true); // @phpstan-ignore-line The mock does the assertion, this remove a warning
     }
 
     public function testUpdateEntity(): void
     {
         self::bootKernel();
 
-        $name = 'Product 1 +test'.uniqid();
+        $name = 'Product 1 +test'.uniqid('', true);
         // Mock the PopulateService to assert 'fillData' is called once
         $populateMock = $this->getMockBuilder(PopulateService::class)
-            ->setConstructorArgs([$this->createMock(ClientInterface::class)])
+            ->setConstructorArgs([$this->createStub(ClientInterface::class)])
             ->getMock();
         $populateMock->expects($this->once())
             ->method('fillData')
@@ -102,8 +100,6 @@ class AutopopulateTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
 
         $product->name = $name;
         $entityManager->flush();
-
-        $this->assertTrue(true); // @phpstan-ignore-line The mock does the assertion, this remove a warning
     }
 
     public function testDeleteEntity(): void
@@ -122,7 +118,7 @@ class AutopopulateTest extends Biblioverse\TypesenseBundle\Tests\KernelTestCase
 
         // Mock the PopulateService to assert 'fillData' is called once
         $populateMock = $this->getMockBuilder(PopulateService::class)
-            ->setConstructorArgs([$this->createMock(ClientInterface::class)])
+            ->setConstructorArgs([$this->createStub(ClientInterface::class)])
             ->getMock();
         $populateMock->expects($this->once())
             ->method('deleteData')

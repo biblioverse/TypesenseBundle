@@ -19,17 +19,18 @@ use PHPUnit\Framework\TestCase;
 class IndexCollectionSubscriberTest extends TestCase
 {
     /**
-     * @param callable(MockObject&PopulateService):void $callable
+     * @param callable(MockObject&PopulateService):void|null $callable
      *
      * @throws \PHPUnit\Framework\MockObject\Exception
      */
     protected function getIndexCollectionSubscriber(?object $entity, ?callable $callable, bool $hasEntityTransformer = true, bool $supportsEntity = true): IndexCollectionSubscriber
     {
-        $populateService = $this->createMock(PopulateService::class);
+        $populateService = $this->createStub(PopulateService::class);
         if (null !== $callable) {
+            $populateService = $this->createMock(PopulateService::class);
             $callable($populateService);
         }
-        $mapperLocator = $this->createMock(MapperLocatorInterface::class);
+        $mapperLocator = $this->createStub(MapperLocatorInterface::class);
         $mapperLocator->method('getEntityTransformers')->willReturn(['mapper' => new class(supportsEntity: $supportsEntity) implements EntityTransformerInterface {
             public function __construct(private readonly bool $supportsEntity = true)
             {
@@ -48,7 +49,7 @@ class IndexCollectionSubscriberTest extends TestCase
 
         $mapperLocator->method('hasEntityTransformer')->willReturn($hasEntityTransformer);
 
-        $entityIdentifier = $this->createMock(EntityIdentifierInterface::class);
+        $entityIdentifier = $this->createStub(EntityIdentifierInterface::class);
         $entityIdentifier->method('getIdentifiersValue')->willReturn(['id' => '123']);
 
         return new IndexCollectionSubscriber($populateService, $mapperLocator, $entityIdentifier);
@@ -66,12 +67,12 @@ class IndexCollectionSubscriberTest extends TestCase
     {
         $entity = new \stdClass();
 
-        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork = $this->createStub(UnitOfWork::class);
         $unitOfWork->method('getScheduledEntityDeletions')->willReturn([]);
         $unitOfWork->method('getScheduledEntityInsertions')->willReturn([$entity]);
         $unitOfWork->method('getScheduledEntityUpdates')->willReturn([]);
 
-        $objectManager = $this->createMock(EntityManager::class);
+        $objectManager = $this->createStub(EntityManager::class);
         $objectManager->method('getUnitOfWork')->willReturn($unitOfWork);
         $onFlushEventArgs = new OnFlushEventArgs($objectManager);
 
@@ -80,19 +81,18 @@ class IndexCollectionSubscriberTest extends TestCase
         });
         $indexCollectionSubscriber->onFlush($onFlushEventArgs);
         $indexCollectionSubscriber->postFlush(new PostFlushEventArgs($objectManager));
-        $this->assertTrue(true); // @phpstan-ignore-line Assertion done via mock
     }
 
     public function testOnFlushUpdate(): void
     {
         $entity = new \stdClass();
 
-        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork = $this->createStub(UnitOfWork::class);
         $unitOfWork->method('getScheduledEntityDeletions')->willReturn([]);
         $unitOfWork->method('getScheduledEntityInsertions')->willReturn([]);
         $unitOfWork->method('getScheduledEntityUpdates')->willReturn([$entity]);
 
-        $objectManager = $this->createMock(EntityManager::class);
+        $objectManager = $this->createStub(EntityManager::class);
         $objectManager->method('getUnitOfWork')->willReturn($unitOfWork);
         $onFlushEventArgs = new OnFlushEventArgs($objectManager);
 
@@ -101,19 +101,18 @@ class IndexCollectionSubscriberTest extends TestCase
         });
         $indexCollectionSubscriber->onFlush($onFlushEventArgs);
         $indexCollectionSubscriber->postFlush(new PostFlushEventArgs($objectManager));
-        $this->assertTrue(true); // @phpstan-ignore-line Assertion done via mock
     }
 
     public function testOnFlushDeletion(): void
     {
         $entity = new \stdClass();
 
-        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork = $this->createStub(UnitOfWork::class);
         $unitOfWork->method('getScheduledEntityDeletions')->willReturn([$entity]);
         $unitOfWork->method('getScheduledEntityInsertions')->willReturn([]);
         $unitOfWork->method('getScheduledEntityUpdates')->willReturn([]);
 
-        $objectManager = $this->createMock(EntityManager::class);
+        $objectManager = $this->createStub(EntityManager::class);
         $objectManager->method('getUnitOfWork')->willReturn($unitOfWork);
         $onFlushEventArgs = new OnFlushEventArgs($objectManager);
 
@@ -122,19 +121,18 @@ class IndexCollectionSubscriberTest extends TestCase
         });
         $indexCollectionSubscriber->onFlush($onFlushEventArgs);
         $indexCollectionSubscriber->postFlush(new PostFlushEventArgs($objectManager));
-        $this->assertTrue(true); // @phpstan-ignore-line Assertion done via mock
     }
 
     public function testNothingWithoutEntityTransformerOnFlush(): void
     {
         $entity = new \stdClass();
 
-        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork = $this->createStub(UnitOfWork::class);
         $unitOfWork->method('getScheduledEntityDeletions')->willReturn([$entity]);
         $unitOfWork->method('getScheduledEntityInsertions')->willReturn([$entity]);
         $unitOfWork->method('getScheduledEntityUpdates')->willReturn([$entity]);
 
-        $objectManager = $this->createMock(EntityManager::class);
+        $objectManager = $this->createStub(EntityManager::class);
         $objectManager->method('getUnitOfWork')->willReturn($unitOfWork);
         $onFlushEventArgs = new OnFlushEventArgs($objectManager);
 
@@ -144,19 +142,18 @@ class IndexCollectionSubscriberTest extends TestCase
         }, false);
         $indexCollectionSubscriber->onFlush($onFlushEventArgs);
         $indexCollectionSubscriber->postFlush(new PostFlushEventArgs($objectManager));
-        $this->assertTrue(true); // @phpstan-ignore-line Assertion done via mock
     }
 
     public function testNothingWithoutSupportOnFlush(): void
     {
         $entity = new \stdClass();
 
-        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork = $this->createStub(UnitOfWork::class);
         $unitOfWork->method('getScheduledEntityDeletions')->willReturn([$entity]);
         $unitOfWork->method('getScheduledEntityInsertions')->willReturn([$entity]);
         $unitOfWork->method('getScheduledEntityUpdates')->willReturn([$entity]);
 
-        $objectManager = $this->createMock(EntityManager::class);
+        $objectManager = $this->createStub(EntityManager::class);
         $objectManager->method('getUnitOfWork')->willReturn($unitOfWork);
         $onFlushEventArgs = new OnFlushEventArgs($objectManager);
 
@@ -166,6 +163,5 @@ class IndexCollectionSubscriberTest extends TestCase
         }, true, false);
         $indexCollectionSubscriber->onFlush($onFlushEventArgs);
         $indexCollectionSubscriber->postFlush(new PostFlushEventArgs($objectManager));
-        $this->assertTrue(true); // @phpstan-ignore-line Assertion done via mock
     }
 }

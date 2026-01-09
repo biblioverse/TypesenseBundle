@@ -81,23 +81,23 @@ class EntityDataGeneratorTest extends TestCase
     {
         $identifiers = ['id'];
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
 
-        $classMetadata = $this->createMock(ClassMetadata::class);
-        $classMetadata->expects($this->any())->method('getIdentifier')->willReturn($identifiers);
-        $entityManager->expects($this->any())->method('getClassMetadata')->with($entityClass)->willReturn($classMetadata);
+        $classMetadata = $this->createStub(ClassMetadata::class);
+        $classMetadata->method('getIdentifier')->willReturn($identifiers);
+        $entityManager->method('getClassMetadata')->with($entityClass)->willReturn($classMetadata);
 
-        $repository = $this->createMock(EntityRepository::class);
-        $entityManager->expects($this->any())->method('getRepository')->with($entityClass)->willReturn($repository);
-        $queryBuilder = $this->createMock(QueryBuilder::class);
-        $queryBuilder->expects($this->any())->method('select')->willReturnSelf();
+        $repository = $this->createStub(EntityRepository::class);
+        $entityManager->method('getRepository')->with($entityClass)->willReturn($repository);
+        $queryBuilder = $this->createStub(QueryBuilder::class);
+        $queryBuilder->method('select')->willReturnSelf();
 
-        $dataQuery = $this->createMock(Query::class);
+        $dataQuery = $this->createStub(Query::class);
 
-        $dataQuery->expects($this->any())->method('toIterable')->willReturnCallback(fn () => new \ArrayIterator($mockData));
-        $dataQuery->expects($this->any())->method('getSingleScalarResult')->willReturn(count($mockData));
-        $repository->expects($this->any())->method('createQueryBuilder')->with('entity')->willReturn($queryBuilder);
-        $queryBuilder->expects($this->any())->method('getQuery')->willReturn($dataQuery);
+        $dataQuery->method('toIterable')->willReturnCallback(fn () => new \ArrayIterator($mockData));
+        $dataQuery->method('getSingleScalarResult')->willReturn(count($mockData));
+        $repository->method('createQueryBuilder')->with('entity')->willReturn($queryBuilder);
+        $queryBuilder->method('getQuery')->willReturn($dataQuery);
 
         return $entityManager;
     }

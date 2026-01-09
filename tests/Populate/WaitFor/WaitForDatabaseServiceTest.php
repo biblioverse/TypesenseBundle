@@ -13,10 +13,10 @@ class WaitForDatabaseServiceTest extends TestCase
 {
     public function testWaitReturnsImmediatelyIfConnected(): void
     {
-        $connection = $this->createMock(Connection::class);
+        $connection = $this->createStub(Connection::class);
         $connection->method('isConnected')->willReturn(true);
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
         $entityManager->method('getConnection')->willReturn($connection);
 
         $waitForDatabaseService = new WaitForDatabaseService($entityManager);
@@ -32,10 +32,10 @@ class WaitForDatabaseServiceTest extends TestCase
 
     public function testWaitRetriesUntilConnected(): void
     {
-        $connection = $this->createMock(Connection::class);
+        $connection = $this->createStub(Connection::class);
         $connection->method('isConnected')->willReturn(false);
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
         $entityManager->method('getConnection')->willReturn($connection);
 
         $waitForDatabaseService = new WaitForDatabaseService($entityManager);
@@ -48,7 +48,7 @@ class WaitForDatabaseServiceTest extends TestCase
                 throw new DBALException('Internal error');
             }
 
-            return $this->createMock(Result::class);
+            return $this->createStub(Result::class);
         });
 
         $waitForDatabaseService->wait(5, null, 0); // No sleep for faster test execution
@@ -57,10 +57,10 @@ class WaitForDatabaseServiceTest extends TestCase
 
     public function testWaitThrowsExceptionAfterMaxAttempts(): void
     {
-        $connection = $this->createMock(Connection::class);
+        $connection = $this->createStub(Connection::class);
         $connection->method('isConnected')->willReturn(false);
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
         $entityManager->method('getConnection')->willReturn($connection);
 
         $waitForDatabaseService = new WaitForDatabaseService($entityManager);
@@ -75,10 +75,10 @@ class WaitForDatabaseServiceTest extends TestCase
 
     public function testWaitCallsCallbackOnFailure(): void
     {
-        $connection = $this->createMock(Connection::class);
+        $connection = $this->createStub(Connection::class);
         $connection->method('isConnected')->willReturn(false);
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
         $entityManager->method('getConnection')->willReturn($connection);
 
         $waitForDatabaseService = new WaitForDatabaseService($entityManager);

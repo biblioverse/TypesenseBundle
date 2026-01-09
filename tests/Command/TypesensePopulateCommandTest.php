@@ -17,7 +17,7 @@ class TypesensePopulateCommandTest extends TestCase
 {
     public function testEmpty(): void
     {
-        $typesensePopulateCommand = new TypesensePopulateCommand($this->createMock(PopulateService::class), $this->createMock(MapperLocatorInterface::class), $this->createMock(CollectionAliasInterface::class));
+        $typesensePopulateCommand = new TypesensePopulateCommand($this->createStub(PopulateService::class), $this->createStub(MapperLocatorInterface::class), $this->createStub(CollectionAliasInterface::class));
         $commandTester = new CommandTester($typesensePopulateCommand);
         $code = $commandTester->execute([]);
         $this->assertSame(0, $code);
@@ -28,12 +28,12 @@ class TypesensePopulateCommandTest extends TestCase
 
     public function testOnceCollection(): void
     {
-        $mapper = $this->createMock(MapperLocatorInterface::class);
+        $mapper = $this->createStub(MapperLocatorInterface::class);
         $mapper->method('countDataGenerator')->willReturn(1);
-        $mapper->method('getDataGenerator')->willReturn($this->createMock(DataGeneratorInterface::class));
-        $mapper->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createMock(EntityTransformerInterface::class)]);
-        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createMock(CollectionManagerInterface::class)]);
-        $typesensePopulateCommand = new TypesensePopulateCommand($this->createMock(PopulateService::class), $mapper, $this->createMock(CollectionAliasInterface::class));
+        $mapper->method('getDataGenerator')->willReturn($this->createStub(DataGeneratorInterface::class));
+        $mapper->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createStub(EntityTransformerInterface::class)]);
+        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createStub(CollectionManagerInterface::class)]);
+        $typesensePopulateCommand = new TypesensePopulateCommand($this->createStub(PopulateService::class), $mapper, $this->createStub(CollectionAliasInterface::class));
         $commandTester = new CommandTester($typesensePopulateCommand);
         $code = $commandTester->execute([]);
         $this->assertSame(0, $code);
@@ -47,16 +47,16 @@ class TypesensePopulateCommandTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Error while populating collection');
 
-        $mapper = $this->createMock(MapperLocatorInterface::class);
+        $mapper = $this->createStub(MapperLocatorInterface::class);
         $mapper->method('countDataGenerator')->willReturn(1);
-        $mapper->method('getDataGenerator')->willReturn($this->createMock(DataGeneratorInterface::class));
-        $mapper->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createMock(EntityTransformerInterface::class)]);
-        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createMock(CollectionManagerInterface::class)]);
+        $mapper->method('getDataGenerator')->willReturn($this->createStub(DataGeneratorInterface::class));
+        $mapper->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createStub(EntityTransformerInterface::class)]);
+        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createStub(CollectionManagerInterface::class)]);
 
-        $populate = $this->createMock(PopulateService::class);
+        $populate = $this->createStub(PopulateService::class);
         $populate->method('fillCollection')->willThrowException(new \RuntimeException('Error while populating collection'));
 
-        $typesensePopulateCommand = new TypesensePopulateCommand($populate, $mapper, $this->createMock(CollectionAliasInterface::class));
+        $typesensePopulateCommand = new TypesensePopulateCommand($populate, $mapper, $this->createStub(CollectionAliasInterface::class));
 
         $commandTester = null;
         try {
@@ -76,9 +76,9 @@ class TypesensePopulateCommandTest extends TestCase
         $mapper = $this->createMock(MapperLocatorInterface::class);
         $mapper->method('countDataGenerator')->willReturn(1);
         $mapper->expects($this->never())->method('getDataGenerator')->willThrowException(new \RuntimeException('Should not be called'));
-        $mapper->expects($this->never())->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createMock(EntityTransformerInterface::class)]);
-        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createMock(CollectionManagerInterface::class)]);
-        $typesensePopulateCommand = new TypesensePopulateCommand($this->createMock(PopulateService::class), $mapper, $this->createMock(CollectionAliasInterface::class));
+        $mapper->expects($this->never())->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createStub(EntityTransformerInterface::class)]);
+        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createStub(CollectionManagerInterface::class)]);
+        $typesensePopulateCommand = new TypesensePopulateCommand($this->createStub(PopulateService::class), $mapper, $this->createStub(CollectionAliasInterface::class));
         $commandTester = new CommandTester($typesensePopulateCommand);
         $code = $commandTester->execute(['--no-data' => true]);
         $this->assertSame(0, $code);
@@ -100,12 +100,12 @@ class TypesensePopulateCommandTest extends TestCase
                 throw new \LogicException('Should not be called');
             }
         };
-        $mapper = $this->createMock(MapperLocatorInterface::class);
+        $mapper = $this->createStub(MapperLocatorInterface::class);
         $mapper->method('countDataGenerator')->willReturn(1);
-        $mapper->method('getDataGenerator')->willReturn($this->createMock(DataGeneratorInterface::class));
-        $mapper->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createMock(EntityTransformerInterface::class)]);
-        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createMock(CollectionManagerInterface::class)]);
-        $typesensePopulateCommand = new TypesensePopulateCommand($this->createMock(PopulateService::class), $mapper, $this->createMock(CollectionAliasInterface::class), [$dummyWaitForService]);
+        $mapper->method('getDataGenerator')->willReturn($this->createStub(DataGeneratorInterface::class));
+        $mapper->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createStub(EntityTransformerInterface::class)]);
+        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createStub(CollectionManagerInterface::class)]);
+        $typesensePopulateCommand = new TypesensePopulateCommand($this->createStub(PopulateService::class), $mapper, $this->createStub(CollectionAliasInterface::class), [$dummyWaitForService]);
         $commandTester = new CommandTester($typesensePopulateCommand);
         $code = $commandTester->execute(['--nb-retry' => 0]);
         $this->assertSame(0, $code);
@@ -131,13 +131,13 @@ class TypesensePopulateCommandTest extends TestCase
                 }
             }
         };
-        $mapper = $this->createMock(MapperLocatorInterface::class);
+        $mapper = $this->createStub(MapperLocatorInterface::class);
         $mapper->method('countDataGenerator')->willReturn(1);
-        $mapper->method('getDataGenerator')->willReturn($this->createMock(DataGeneratorInterface::class));
-        $mapper->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createMock(EntityTransformerInterface::class)]);
-        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createMock(CollectionManagerInterface::class)]);
+        $mapper->method('getDataGenerator')->willReturn($this->createStub(DataGeneratorInterface::class));
+        $mapper->method('getEntityTransformers')->willReturnCallback(fn () => ['mapper' => $this->createStub(EntityTransformerInterface::class)]);
+        $mapper->method('getMappers')->willReturnCallback(fn () => ['mapper' => $this->createStub(CollectionManagerInterface::class)]);
 
-        $typesensePopulateCommand = new TypesensePopulateCommand($this->createMock(PopulateService::class), $mapper, $this->createMock(CollectionAliasInterface::class), [$dummyWaitForService]);
+        $typesensePopulateCommand = new TypesensePopulateCommand($this->createStub(PopulateService::class), $mapper, $this->createStub(CollectionAliasInterface::class), [$dummyWaitForService]);
         $commandTester = new CommandTester($typesensePopulateCommand);
         $code = $commandTester->execute(['--nb-retry' => 2]);
         $this->assertSame(0, $code);

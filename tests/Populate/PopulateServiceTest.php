@@ -79,7 +79,7 @@ class PopulateServiceTest extends TestCase
         $data = ['id' => '42', 'name' => 'my name'];
         $docs = $this->createMock(Documents::class);
         $docs->expects($this->once())->method('upsert')->with($data)->willReturn([]);
-        $collection = new Collection('collection', $this->createMock(ApiCall::class));
+        $collection = new Collection('collection', $this->createStub(ApiCall::class));
         $collection->documents = $docs;
 
         $populateService = $this->getInstance(function (MockObject $mockObject) use ($collection) {
@@ -114,7 +114,7 @@ class PopulateServiceTest extends TestCase
 
             $mockObject->expects($this->once())
                 ->method('getCollection')
-                ->willReturn(new Collection($collectionName, $this->createMock(ApiCall::class)));
+                ->willReturn(new Collection($collectionName, $this->createStub(ApiCall::class)));
         });
 
         $populateService->createCollection($collectionName, $mapping);
@@ -148,7 +148,7 @@ class PopulateServiceTest extends TestCase
                 return [];
             });
 
-        $collection = new Collection('collection', $this->createMock(ApiCall::class));
+        $collection = new Collection('collection', $this->createStub(ApiCall::class));
         $collection->documents = $docs;
 
         $populateService = $this->getInstance(function (MockObject $mockObject) use ($collection) {
@@ -197,7 +197,7 @@ class PopulateServiceTest extends TestCase
         $doc->expects($this->once())
             ->method('delete');
 
-        $collection = new Collection('collection', $this->createMock(ApiCall::class));
+        $collection = new Collection('collection', $this->createStub(ApiCall::class));
         $collection->documents = $docs;
 
         $populateService = $this->getInstance(function ($client) use ($collection) {
@@ -233,8 +233,10 @@ class PopulateServiceTest extends TestCase
      */
     public function getInstance(?callable $configureClientMock = null, int $batchSize = 100): PopulateService
     {
-        $client = $this->createMock(ClientInterface::class);
-        if ($configureClientMock !== null) {
+        if (null === $configureClientMock) {
+            $client = $this->createStub(ClientInterface::class);
+        } else {
+            $client = $this->createMock(ClientInterface::class);
             $configureClientMock($client);
         }
 
