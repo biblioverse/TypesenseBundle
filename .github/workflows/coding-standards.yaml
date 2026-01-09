@@ -29,13 +29,14 @@ jobs:
           - "8.2"
           - "8.3"
           - "8.4"
+          - "8.5"
         composer-versions:
           - highest
         include:
           - composer-versions: "lowest"
             php-version: "8.2"
           - composer-versions: "lowest"
-            php-version: "8.4"
+            php-version: "8.5"
 
     services:
       typesense:
@@ -66,7 +67,7 @@ jobs:
         run: |
           composer run init-db
       - name: "Run PHPCS"
-        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
+        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.5'
         run: |
           composer run test-phpcs
 
@@ -75,7 +76,7 @@ jobs:
           composer run test-rector
 
       - name: "Run phpstan"
-        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
+        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.5'
         run: |
           composer run phpstan
 
@@ -89,7 +90,7 @@ jobs:
           exit $EXIT_STATUS
 
       - name: Get previous coverage from main
-        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4' && github.event_name == 'pull_request'
+        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.5' && github.event_name == 'pull_request'
         uses: dawidd6/action-download-artifact@v12
         continue-on-error: true
         with:
@@ -99,7 +100,7 @@ jobs:
           path: tests/base
 
       - name: Upload coverage
-        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
+        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.5'
         uses: actions/upload-artifact@v6
         with:
           overwrite: true
@@ -107,7 +108,7 @@ jobs:
           path: tests/coverage/clover.xml
 
       - name: Upload html-coverage
-        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
+        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.5'
         uses: actions/upload-artifact@v6
         with:
           overwrite: true
@@ -116,13 +117,13 @@ jobs:
 
       - name: Coverage Report as Comment (Clover)
         uses: lucassabreu/comment-coverage-clover@main
-        if: github.event_name == 'pull_request' && matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
+        if: github.event_name == 'pull_request' && matrix.composer-versions == 'highest' && matrix.php-version == '8.5'
         with:
           file: tests/coverage/clover.xml
           base-file: tests/base/clover.xml
 
       - name: Coverage as artifact
-        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
+        if: matrix.composer-versions == 'highest' && matrix.php-version == '8.5'
         uses: actions/upload-artifact@v6
         with:
           overwrite: true
