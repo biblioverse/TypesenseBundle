@@ -17,7 +17,7 @@ jobs:
     name: "conventional-commits"
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: webiny/action-conventional-commits@v1.3.0
   coding-standards:
     name: "coding-standards"
@@ -50,7 +50,7 @@ jobs:
           TYPESENSE_ENABLE_CORS: true
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v5"
+        uses: "actions/checkout@v6"
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -133,7 +133,7 @@ jobs:
     runs-on: "ubuntu-24.04"
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v5"
+        uses: "actions/checkout@v6"
       - name: Download Coverage Artifact
         uses: actions/download-artifact@v7
         with:
