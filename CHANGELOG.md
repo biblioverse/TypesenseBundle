@@ -2,6 +2,19 @@
 ## [Unreleased]
 
 
+<a name="v0.0.9"></a>
+## [v0.0.9](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.8...v0.0.9)
+
+### Feat
+
+* PHP 8.5 support
+
+### Fix
+
+* Possibly invalid array key type string|null
+* **deps:** update symfony packages to v8
+
+
 <a name="v0.0.8"></a>
 ## [v0.0.8](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.7...v0.0.8)
 
