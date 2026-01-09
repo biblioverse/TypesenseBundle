@@ -26,15 +26,13 @@ jobs:
       fail-fast: true
       matrix:
         php-version:
-          - "8.2"
-          - "8.3"
           - "8.4"
           - "8.5"
         composer-versions:
           - highest
         include:
           - composer-versions: "lowest"
-            php-version: "8.2"
+            php-version: "8.4"
           - composer-versions: "lowest"
             php-version: "8.5"
 
