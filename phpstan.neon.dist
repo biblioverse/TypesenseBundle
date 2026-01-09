@@ -6,9 +6,5 @@ parameters:
         - tests/
     excludePaths:
         - tests/kernel/*
-    ignoreErrors:
-        -
-           message: '#(.*)#'
-           path: src/AbstractBiblioverseTypesenseBundle.php
 includes:
 	- phpstan-baseline.neon

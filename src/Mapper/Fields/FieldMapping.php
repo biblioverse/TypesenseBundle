@@ -76,19 +76,24 @@ class FieldMapping implements FieldMappingInterface
     }
 
     /**
-     * @template TKey
-     * @template TValue
+     * @template TKey of array-key
+     * @template TValue of mixed
      *
      * @param array<TKey, TValue> $array
      *
-     * @return array<TKey, TValue>
+     * @return array<TKey, (TValue is array ? array<array-key, mixed> : TValue)>
      */
     protected static function array_filter_recursive(array $array, ?callable $callback = null): array
     {
         $array = is_callable($callback) ? array_filter($array, $callback) : array_filter($array);
-        foreach ($array as &$value) {
+
+        foreach ($array as $key => $value) {
+            if (is_resource($value)) {
+                throw new \RuntimeException('no resource allowed');
+            }
+
             if (is_array($value)) {
-                $value = self::array_filter_recursive($value, $callback);
+                $array[$key] = self::array_filter_recursive($value, $callback);
             }
         }
 
@@ -117,7 +122,7 @@ class FieldMapping implements FieldMappingInterface
             'type' => $this->type,
             'vec_dist' => $this->vecDist,
             'embed' => $this->embed,
-        ], fn ($value) => $value !== null && $value !== '' && $value !== []);
+        ], fn ($value) => !in_array($value, [null, '', []], true));
     }
 
     public function getType(): string
