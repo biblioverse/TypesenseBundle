@@ -4,10 +4,7 @@ doctrine:
     charset:              utf8mb4
     logging:              '%kernel.debug%'
   orm:
-    auto_generate_proxy_classes: true
-    enable_lazy_ghost_objects: true
     naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-    report_fields_where_declared: true
     controller_resolver:
         auto_mapping: false
     mappings:
