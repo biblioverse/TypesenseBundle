@@ -90,7 +90,7 @@ class EntityTransformerTest extends TestCase
      */
     private function getTransformer(?MappingGeneratorInterface $mappingGenerator = null): EntityTransformer
     {
-        $this->createMock(EntityManagerInterface::class);
+        $this->createStub(EntityManagerInterface::class);
         $mappingGenerator ??= $this->createMappingGenerator(null);
         $valueConverter = $this->createValueConverter();
 

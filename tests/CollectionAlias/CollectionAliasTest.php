@@ -15,7 +15,7 @@ class CollectionAliasTest extends TestCase
 {
     public function testTemplate(): void
     {
-        $client = $this->createMock(ClientInterface::class);
+        $client = $this->createStub(ClientInterface::class);
 
         $collectionAlias = new CollectionAlias($client, 'pre-%s-suffix');
 
@@ -28,12 +28,10 @@ class CollectionAliasTest extends TestCase
 
     public function testSwitch(): void
     {
-        $collection = $this->createMock(Collection::class);
+        $collection = $this->createStub(Collection::class);
         $aliases = $this->createMock(Aliases::class);
 
-        $client = $this->getMockBuilder(ClientInterface::class)
-            ->enableOriginalConstructor()
-            ->getMock();
+        $client = $this->createStub(ClientInterface::class);
         $client->method('getCollection')
             ->willReturn($collection);
 
@@ -46,19 +44,15 @@ class CollectionAliasTest extends TestCase
 
         $collectionAlias = new CollectionAlias($client);
         $collectionAlias->switch('books', 'books_alias');
-
-        $this->assertTrue(true); // @phpstan-ignore-line The mock will fail if the method is not called
     }
 
     public function testMissingAliasSwitch(): void
     {
-        $collection = $this->createMock(Collection::class);
+        $collection = $this->createStub(Collection::class);
         $collection->method('retrieve')->willThrowException(new TypesenseClientError('Collection books_alias not found'));
         $aliases = $this->createMock(Aliases::class);
 
-        $client = $this->getMockBuilder(ClientInterface::class)
-            ->enableOriginalConstructor()
-            ->getMock();
+        $client = $this->createStub(ClientInterface::class);
         $client->method('getCollection')->willReturn($collection);
 
         $client->method('getAliases')

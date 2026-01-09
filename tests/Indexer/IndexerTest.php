@@ -38,8 +38,6 @@ class IndexerTest extends KernelTestCase
         $product->name = 'test';
 
         $indexer->indexEntity($product);
-
-        $this->assertTrue(true); // @phpstan-ignore-line Mock handle the test.
     }
 
     public function testRemoveEntity(): void
@@ -52,7 +50,7 @@ class IndexerTest extends KernelTestCase
             ->method('deleteData')
             ->with('products', ['id' => 12, 'name' => 'test'])
             ->willReturnCallback(function () {
-                yield ['id' => (string) 12, 'name' => 'test'];
+                yield ['id' => '12', 'name' => 'test'];
             });
 
         static::getContainer()->set(PopulateService::class, $populateMock);
@@ -64,8 +62,6 @@ class IndexerTest extends KernelTestCase
         $product->name = 'test';
 
         $indexer->removeEntity($product);
-
-        $this->assertTrue(true); // @phpstan-ignore-line Mock handle the test.
     }
 
     public function testNoIndexOnUnsupportedEntity(): void

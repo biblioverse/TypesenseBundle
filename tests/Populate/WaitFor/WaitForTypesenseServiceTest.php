@@ -11,8 +11,8 @@ class WaitForTypesenseServiceTest extends TestCase
 {
     public function testWaitSucceedsImmediately(): void
     {
-        $client = $this->createMock(ClientInterface::class);
-        $health = $this->createMock(HealthInterface::class);
+        $client = $this->createStub(ClientInterface::class);
+        $health = $this->createStub(HealthInterface::class);
         $health->method('retrieve')->willReturn(['ok' => true]);
 
         $client->method('getHealth')->willReturn($health);
@@ -25,8 +25,8 @@ class WaitForTypesenseServiceTest extends TestCase
 
     public function testWaitRetriesAndSucceeds(): void
     {
-        $client = $this->createMock(ClientInterface::class);
-        $health = $this->createMock(HealthInterface::class);
+        $client = $this->createStub(ClientInterface::class);
+        $health = $this->createStub(HealthInterface::class);
         $health->method('retrieve')->willReturn(['ok' => true]);
 
         $client->method('getHealth')->willReturn($health);
@@ -48,8 +48,8 @@ class WaitForTypesenseServiceTest extends TestCase
 
     public function testWaitThrowsExceptionOnUnHealthy(): void
     {
-        $client = $this->createMock(ClientInterface::class);
-        $health = $this->createMock(HealthInterface::class);
+        $client = $this->createStub(ClientInterface::class);
+        $health = $this->createStub(HealthInterface::class);
         $health->method('retrieve')->willReturn(['ok' => false]);
         $client->method('getHealth')->willReturn($health);
 
@@ -63,8 +63,8 @@ class WaitForTypesenseServiceTest extends TestCase
 
     public function testWaitThrowsExceptionAfterMaxRetries(): void
     {
-        $client = $this->createMock(ClientInterface::class);
-        $health = $this->createMock(HealthInterface::class);
+        $client = $this->createStub(ClientInterface::class);
+        $health = $this->createStub(HealthInterface::class);
 
         $client->method('getHealth')->willReturn($health);
 
@@ -81,7 +81,7 @@ class WaitForTypesenseServiceTest extends TestCase
 
     public function testGetNameReturnsTypesense(): void
     {
-        $client = $this->createMock(ClientInterface::class);
+        $client = $this->createStub(ClientInterface::class);
         $waitForTypesenseService = new WaitForTypesenseService($client);
 
         $this->assertEquals('Typesense', $waitForTypesenseService->getName());
