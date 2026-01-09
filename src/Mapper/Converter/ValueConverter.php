@@ -53,7 +53,7 @@ class ValueConverter implements ValueConverterInterface
      */
     private function toGeoPoint(mixed $value): ?array
     {
-        if ($value === null || $value === '' || $value === []) {
+        if (in_array($value, [null, '', []], true)) {
             return null;
         }
 
@@ -114,7 +114,7 @@ class ValueConverter implements ValueConverterInterface
                 DataTypeEnum::BOOL => (bool) $value,
                 DataTypeEnum::BOOL_ARRAY => array_map(fn ($v) => (bool) $v, (array) $value),
                 DataTypeEnum::GEOPOINT => $this->toGeoPoint($value),
-                DataTypeEnum::GEOPOINT_ARRAY => array_map(fn ($v) => $this->toGeoPoint($v), (array) $value),
+                DataTypeEnum::GEOPOINT_ARRAY => array_map($this->toGeoPoint(...), (array) $value),
                 DataTypeEnum::OBJECT => $this->toObject($value, $optional),
                 DataTypeEnum::OBJECT_ARRAY => array_map(fn ($v) => $this->toObject($v, $optional), (array) $value),
                 DataTypeEnum::STRING_CONVERTIBLE, DataTypeEnum::AUTO, DataTypeEnum::IMAGE => $value, // Automatically detect type

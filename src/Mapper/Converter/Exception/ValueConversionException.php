@@ -4,11 +4,6 @@ namespace Biblioverse\TypesenseBundle\Mapper\Converter\Exception;
 
 class ValueConversionException extends \Exception
 {
-    public function __construct(string $message, int $code = 0, ?\Throwable $throwable = null)
-    {
-        parent::__construct($message, $code, $throwable);
-    }
-
     public static function fromType(mixed $value, string $type, ?\Throwable $throwable = null): self
     {
         $valueType = get_debug_type($value);
