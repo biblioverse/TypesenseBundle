@@ -100,7 +100,7 @@ jobs:
 
       - name: Upload coverage
         if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           overwrite: true
           name: coverage-report
@@ -108,7 +108,7 @@ jobs:
 
       - name: Upload html-coverage
         if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           overwrite: true
           name: coverage-report-web
@@ -123,7 +123,7 @@ jobs:
 
       - name: Coverage as artifact
         if: matrix.composer-versions == 'highest' && matrix.php-version == '8.4'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           overwrite: true
           name: coverage-report
@@ -135,7 +135,7 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v5"
       - name: Download Coverage Artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: coverage-report
           path: tests/coverage/
@@ -165,7 +165,7 @@ jobs:
           push_badge: false
 
       - name: Docs as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           overwrite: true
           name: docs-public
