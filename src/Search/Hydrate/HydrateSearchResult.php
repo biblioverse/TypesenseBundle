@@ -35,7 +35,12 @@ class HydrateSearchResult implements HydrateSearchResultInterface
 
         $hits = $searchResults['hits'] ?? [];
         $ids = array_map(static function (mixed $result) use ($primaryKeyName): ?int {
-            if (!is_array($result) || !is_array($result['document']) || !is_scalar($result['document'][$primaryKeyName] ?? null)) {
+            if ($primaryKeyName === null || !is_array($result) || !is_array($result['document'])) {
+                return null;
+            }
+
+            // The primary key doesn't exist or is composed
+            if (!array_key_exists($primaryKeyName, $result['document']) || !is_scalar($result['document'][$primaryKeyName] ?? null)) {
                 return null;
             }
 
