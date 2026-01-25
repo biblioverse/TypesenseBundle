@@ -14,7 +14,7 @@
     "symfony/http-client": "^6.4.18|^7.2 || 8.0.3",
     "symfony/http-kernel": "^6.4|^7.2 || 8.0.3",
     "symfony/property-access": "^6.4|^7.2 || 8.0.3",
-    "symfony/service-contracts": "^3.5",
+    "symfony/service-contracts": "^3.5 || ^7.0",
     "symfony/var-exporter": "^6.4|^7.2 || 8.0.0",
     "typesense/typesense-php": "^4.9|^5.0"
   },
