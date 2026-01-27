@@ -16,7 +16,7 @@
     "symfony/property-access": "^6.4|^7.2 || 8.0.3",
     "symfony/service-contracts": "^3.5",
     "symfony/var-exporter": "^6.4|^7.2 || 8.0.0",
-    "typesense/typesense-php": "^4.9|^5.0"
+    "typesense/typesense-php": "^4.9|^5.0 || 6.0.0"
   },
   "require-dev": {
     "doctrine/doctrine-bundle": "^2.0",
