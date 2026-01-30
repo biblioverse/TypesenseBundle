@@ -91,7 +91,7 @@ jobs:
 
       - name: Get previous coverage from main
         if: matrix.composer-versions == 'highest' && matrix.php-version == '8.5' && github.event_name == 'pull_request'
-        uses: dawidd6/action-download-artifact@v12
+        uses: dawidd6/action-download-artifact@v13
         continue-on-error: true
         with:
           workflow: coding-standards.yaml # this file
