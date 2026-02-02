@@ -6,6 +6,7 @@ use Biblioverse\TypesenseBundle\Search\Results\SearchResults;
 use Biblioverse\TypesenseBundle\Search\Results\SearchResultsHydrated;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * @template T of object
@@ -14,7 +15,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  */
 class HydrateSearchResult implements HydrateSearchResultInterface
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager, private readonly PropertyAccessorInterface $propertyAccessor)
     {
     }
 
@@ -92,5 +93,25 @@ class HydrateSearchResult implements HydrateSearchResultInterface
         }
 
         return $identifiers[0];
+    }
+
+    public function getId(object $object): string
+    {
+        $classMetadata = $this->entityManager->getClassMetadata($object::class);
+        if ($classMetadata->isIdentifierComposite) {
+            throw new \RuntimeException(sprintf('Composite identifier not supported to be hydrated for class: %s', $classMetadata->getName()));
+        }
+        $idField = $this->getIdNameFromMetadata($classMetadata);
+
+        $value = $this->propertyAccessor->getValue($object, $idField);
+        if ($value === null) {
+            throw new \RuntimeException(sprintf('Unable to read identifier field for class %s: Value is null', $classMetadata->getName()));
+        }
+
+        if (false === is_scalar($value)) {
+            throw new \RuntimeException(sprintf('Unable to read identifier field for class %s: Value is not scalar', $classMetadata->getName()));
+        }
+
+        return (string) $value;
     }
 }
