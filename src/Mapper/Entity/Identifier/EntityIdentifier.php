@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Mapper\Entity\Identifier;
 
 use Doctrine\ORM\EntityManagerInterface;

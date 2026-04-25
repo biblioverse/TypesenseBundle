@@ -128,7 +128,7 @@ class SearchQuery implements SearchQueryInterface
             }
         }
 
-        return $values === [] ? null : implode(',', array_map($convert, $values));
+        return $values === [] ? null : implode(',', array_map($convert, $values)); // @phpstan-ignore argument.type
     }
 
     public function toArray(): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Mapper\Locator;
 
 use Biblioverse\TypesenseBundle\Mapper\CollectionManagerInterface;
