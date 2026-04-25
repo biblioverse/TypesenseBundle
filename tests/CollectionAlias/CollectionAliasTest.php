@@ -24,6 +24,9 @@ class CollectionAliasTest extends TestCase
 
         // Date is injected
         $this->assertStringStartsWith('pre-books-suffix-'.date('Y'), $collectionAlias->getName('books'));
+
+        // Revert works
+        $this->assertSame('books', $collectionAlias->revertName('pre-books-suffix-'.date('Y-m-d-H-i-s')));
     }
 
     public function testSwitch(): void

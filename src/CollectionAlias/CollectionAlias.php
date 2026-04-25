@@ -56,4 +56,19 @@ class CollectionAlias implements CollectionAliasInterface
             return false;
         }
     }
+
+    public function revertName(string $name): string
+    {
+        // Remove the timestamp suffix (format: -Y-m-d-H-i-s)
+        $nameWithoutTimestamp = preg_replace('/-\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}$/', '', $name) ?? throw new AliasException("Unable to revert name '$name'.");
+
+        // Remove the collection template prefix/suffix
+        $pattern = str_replace('%s', '(.+)', preg_quote($this->collectionTemplate, '/'));
+
+        if (preg_match('/^'.$pattern.'$/', $nameWithoutTimestamp, $matches)) {
+            return $matches[1];
+        }
+
+        throw new AliasException("Unable to revert name '$name' with template '{$this->collectionTemplate}'.");
+    }
 }
