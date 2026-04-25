@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Tests\Mapper\Converter\Exception;
 
 use Biblioverse\TypesenseBundle\Mapper\Converter\Exception\ValueConversionException;

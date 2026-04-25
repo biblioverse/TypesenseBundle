@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Populate\WaitFor;
 
 use Biblioverse\TypesenseBundle\Client\ClientInterface;

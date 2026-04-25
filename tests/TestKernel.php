@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\VarExporter\ProxyHelper;
 
 class TestKernel extends Kernel
 {
@@ -96,14 +97,13 @@ class TestKernel extends Kernel
 
     protected function build(ContainerBuilder $containerBuilder): void
     {
-        // Add with_constructor_extractor to remove deprecation (version >=7)
-        // The constant hack is just for rector to not consider this branch as "Always true" and remove it
-        if (constant(Kernel::class.'::VERSION_ID') < 70000) {
-            return;
+        // symfony/var-exporter v8 removed ProxyHelper::generateLazyGhost(); on
+        // PHP 8.4+ Doctrine can fall back to native lazy objects instead.
+        if (\PHP_VERSION_ID >= 80400 && !method_exists(ProxyHelper::class, 'generateLazyGhost')) { // @phpstan-ignore-line
+            $containerBuilder->prependExtensionConfig('doctrine', [
+                'orm' => ['enable_native_lazy_objects' => true],
+            ]);
         }
-        $containerBuilder->prependExtensionConfig('framework', [
-            'property_info' => ['with_constructor_extractor' => false],
-        ]);
     }
 
     private function clearCache(): void

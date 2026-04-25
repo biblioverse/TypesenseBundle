@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Populate\WaitFor;
 
 use Doctrine\ORM\EntityManagerInterface;

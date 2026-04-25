@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Tests\Search;
 
 use Biblioverse\TypesenseBundle\Search\Results\SearchResults;
