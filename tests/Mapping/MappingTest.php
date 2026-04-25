@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Tests\Mapping;
 
 use Biblioverse\TypesenseBundle\Mapper\Fields\FieldMapping;

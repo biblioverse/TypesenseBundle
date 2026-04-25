@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Tests\Repository;
 
 use Biblioverse\TypesenseBundle\Tests\Entity\Product;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Search;
 
 use Biblioverse\TypesenseBundle\Exception\SearchException;

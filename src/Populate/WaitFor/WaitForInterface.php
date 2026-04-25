@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Biblioverse\TypesenseBundle\Populate\WaitFor;
 
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
