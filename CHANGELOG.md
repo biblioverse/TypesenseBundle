@@ -9,8 +9,6 @@
 
 * Merge pull request [#111](https://github.com/biblioverse/TypesenseBundle/issues/111) from biblioverse/sf8-allow
 
-### Feat
-Allow symfony 8, remove support for symfony 6
 
 <a name="v0.0.9"></a>
 ## [v0.0.9](https://github.com/biblioverse/TypesenseBundle/compare/v0.0.8...v0.0.9)
@@ -132,3 +130,4 @@ isMapped added to FieldMappingInterface, Changes on VectorQueryInterface
 ### Fix
 
 * Avoid Service not found in MapperLocator
+
