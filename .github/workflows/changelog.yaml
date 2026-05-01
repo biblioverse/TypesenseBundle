@@ -28,7 +28,7 @@ jobs:
           git-chglog > CHANGELOG.md
           cat CHANGELOG.md
       - name: Changelog as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           overwrite: true
           name: CHANGELOG.md
