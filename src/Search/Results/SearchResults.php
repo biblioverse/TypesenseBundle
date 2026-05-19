@@ -12,11 +12,11 @@ class SearchResults extends AbstractSearchResults
     public function getIterator(): \Traversable
     {
         $data = [];
-        if ($this->offsetExists('hits') && is_array($this->data['hits'])) {
+        if (is_array($this->data['hits']) && $this->offsetExists('hits')) {
             $data = $this->data['hits'];
         }
         /** @var array<int, array<string, mixed>> $data */
-        $data = array_filter(array_map(function (mixed $hits): mixed {
+        $data = array_filter(array_map(static function (mixed $hits): mixed {
             if (!is_array($hits) || $hits === [] || !isset($hits['document'])) {
                 return null;
             }

@@ -12,9 +12,10 @@ use Biblioverse\TypesenseBundle\Utils\ArrayAccessTrait;
  *
  * @phpstan-type Document array<string,mixed>
  * @phpstan-type Highlight array{field:string, snippet?: string, 'matched_tokens': string[]}
- * @phpstan-type Hit array{document: Document, highlight?: Highlight}
+ * @phpstan-type Hit array{document: Document, highlight?: array<string, mixed>,highlights?: list<Highlight>, 'collection'?: string}
  * @phpstan-type FacetCountItem array{count: int, value: string, highlighted: string}
  * @phpstan-type FacetCount array{field_name: string, sampled: bool, stats: array{total_values: int}, counts: FacetCountItem[]}
+ * @phpstan-type UnionRequestParameters array<int, array{'collection': string, 'found': int, 'q': string, 'per_page': int}>
  */
 abstract class AbstractSearchResults implements \ArrayAccess, \IteratorAggregate, \Countable
 {
@@ -83,6 +84,12 @@ abstract class AbstractSearchResults implements \ArrayAccess, \IteratorAggregate
 
     public function getPerPage(): ?int
     {
+        if ($this->getUnionRequestParameters() !== null) {
+            $result = $this->getUnionRequestParameter(0, 'per_page');
+
+            return is_int($result) ? $result : null;
+        }
+
         $params = $this->offsetGet('request_params');
         if (!is_array($params)) {
             return null;
@@ -161,6 +168,21 @@ abstract class AbstractSearchResults implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * @return UnionRequestParameters|null
+     */
+    public function getUnionRequestParameters(): ?array
+    {
+        if (!$this->offsetExists('union_request_params')) {
+            return null;
+        }
+
+        /** @var UnionRequestParameters $data */
+        $data = $this->data['union_request_params'];
+
+        return $data;
+    }
+
+    /**
      * @return \Traversable<int|string, T>
      */
     abstract public function getIterator(): \Traversable;
@@ -169,4 +191,14 @@ abstract class AbstractSearchResults implements \ArrayAccess, \IteratorAggregate
      * @return array<int|string, T>
      */
     abstract public function getResults(): array;
+
+    private function getUnionRequestParameter(int $int, string $key): mixed
+    {
+        $payload = $this->getUnionRequestParameters();
+        if (!isset($payload[$int]) || false === array_key_exists($key, $payload[$int])) {
+            return null;
+        }
+
+        return $payload[$int][$key];
+    }
 }

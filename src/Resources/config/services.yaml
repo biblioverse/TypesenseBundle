@@ -82,3 +82,9 @@ services:
       $enabled: '%biblioverse_typesense.config.auto_update%'
     tags:
       - { name: doctrine.event_subscriber, connection: default }
+
+
+  Biblioverse\TypesenseBundle\Search\Hydrate\HydrateUnion:
+    autowire: true
+    arguments:
+      $entityMapping: '%biblioverse_typesense.config.entity_mapping%'

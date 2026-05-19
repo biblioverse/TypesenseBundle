@@ -61,6 +61,45 @@ class SearchResultTest extends \PHPUnit\Framework\TestCase
         'total_pages' => 12,
     ];
 
+    public const DATA_MULTISEARCH_UNION = [
+        'found' => 3,
+        'hits' => [
+            [
+                'collection' => 'books-2025-10-03-11-19-09',
+                'document' => [
+                    'title' => 'My book 1',
+                    'id' => '124',
+                ],
+                'highlight' => [],
+                'highlights' => [],
+            ],
+            [
+                'collection' => 'books-2025-10-03-11-19-09',
+                'document' => [
+                    'title' => 'my book 2',
+                    'id' => '125',
+                ],
+                'highlight' => [],
+                'highlights' => [],
+            ],
+        ],
+        'out_of' => 3,
+        'page' => 1,
+        'search_cutoff' => false,
+        'search_time_ms' => 0,
+        'union_request_params' => [
+            [
+                'collection' => 'books',
+                'q' => 'a',
+            ],
+            [
+                'collection' => 'posts',
+                'first_q' => '*',
+                'q' => 'b',
+            ],
+        ],
+    ];
+
     public function testFound(): void
     {
         $searchResults = $this->getSearchResult();
@@ -120,6 +159,13 @@ class SearchResultTest extends \PHPUnit\Framework\TestCase
         unset($data['request_params']);
         $searchResults = $this->getSearchResult($data);
         $this->assertEquals([], $searchResults->getRequestParameters());
+    }
+
+    public function testMultisearchUnion(): void
+    {
+        $data = self::DATA_MULTISEARCH_UNION;
+        $searchResults = $this->getSearchResult($data);
+        $this->assertEquals(self::DATA_MULTISEARCH_UNION['union_request_params'], $searchResults->getUnionRequestParameters());
     }
 
     public function testGetHighlightEmpty(): void
